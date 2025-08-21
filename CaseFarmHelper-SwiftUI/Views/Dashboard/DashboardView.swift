@@ -9,8 +9,6 @@ import SwiftUI
 
 struct DashboardView: View {
     
-    let acc2 = Account(profileName: "skpeid", username: "")
-    
     @State var operations: [Operation] = [
         Drop(account: Account(profileName: "jks", username: ""), caseDropped: .dreamsAndNightmares),
         Trade(sender: Account(profileName: "skpeid", username: ""), receiver: Account(profileName: "ObserWard", username: ""), caseTraded: .recoil),
@@ -18,6 +16,7 @@ struct DashboardView: View {
     ]
     
     @State private var isPresentedAddDrop: Bool = false
+    @State private var isPresentedTrade: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -61,6 +60,9 @@ struct DashboardView: View {
             }
             .navigationTitle("Dashboard")
             .navigationDestination(isPresented: $isPresentedAddDrop) {
+                
+            }
+            .navigationDestination(isPresented: $isPresentedTrade) {
                 
             }
         }
