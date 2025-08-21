@@ -10,11 +10,38 @@ import SwiftUI
 struct AccountDetailsView: View {
     let account: Account
     
+    private let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
         VStack {
             Text(account.profileName)
             Text("@\(account.username)")
+            if account.cases.isEmpty {
+                Text("No cases")
+            } else {
+                LazyVGrid(columns: columns) {
+                    ForEach(account.cases.sorted(by: { $0.key.rawValue < $1.key.rawValue }),
+                            id: \.key) { csCase, amount in
+                        VStack {
+                            Image(csCase.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 90)
+                            Text(csCase.displayName)
+                                .font(.caption)
+                            Text("x\(amount)")
+                                .font(.caption2)
+                        }
+                    }
+                }
+            }
+            Spacer()
         }
+        .padding()
     }
 }
 

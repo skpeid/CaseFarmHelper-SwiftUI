@@ -23,7 +23,7 @@ struct AccountsView: View {
                     HStack {
                         Text(account.profileName)
                         Spacer()
-                        Text("Cases: \(account.getCasesCount)")
+                        Text("Cases: \(account.getTotalCasesAmount)")
                     }
                 }
             }

@@ -13,7 +13,7 @@ struct Account: Identifiable, Hashable {
     let username: String
     var cases: [CSCase: Int] = [:]
     
-    var getCasesCount: Int {
+    var getTotalCasesAmount: Int {
         cases.values.reduce(0, +)
     }
 }
