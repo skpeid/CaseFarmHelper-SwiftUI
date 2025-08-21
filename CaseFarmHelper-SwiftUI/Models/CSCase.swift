@@ -7,17 +7,9 @@
 
 import Foundation
 
-struct CaseItem {
-    let caseType: CaseType
-    var displayName: String {
-        caseType.displayName
-    }
-    var imageName: String {
-        caseType.rawValue
-    }
-}
-
-enum CaseType: String {
+enum CSCase: String, CaseIterable, Identifiable {
+    var id: Self { self }
+    
     case dreamsAndNightmares
     case recoil
     case revolution
@@ -38,4 +30,6 @@ enum CaseType: String {
             return "Kilowatt"
         }
     }
+    
+    var imageName: String { rawValue }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 struct CaseFarmHelper_SwiftUIApp: App {
     var body: some Scene {
         WindowGroup {
-            AccountsView()
+            AddAccountView()
         }
     }
 }

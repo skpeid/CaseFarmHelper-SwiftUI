@@ -8,5 +8,4 @@
 struct Account {
     let profileName: String
     let username: String
-    var cases: [CaseItem] = []
 }
