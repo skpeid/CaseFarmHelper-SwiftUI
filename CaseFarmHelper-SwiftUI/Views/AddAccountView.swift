@@ -11,6 +11,11 @@ struct AddAccountView: View {
     
     @State var profileName: String = ""
     @State var username: String = ""
+    @State var cases: [CSCase: Int] = [:]
+    
+    @Binding var accounts: [Account]
+    
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {
@@ -28,22 +33,35 @@ struct AddAccountView: View {
                         .frame(width: 50)
                     Text(csCase.displayName)
                     Spacer()
-                    TextField("0", text: .constant(""))
+                    TextField("0", text: binding(for: csCase))
                         .frame(width: 50)
                         .keyboardType(.numberPad)
                 }
             }
             Spacer()
             Button {
-                
+                let newAccount = Account(profileName: profileName, username: username, cases: cases)
+                accounts.append(newAccount)
+                dismiss()
             } label: {
                 Text("Add Account")
             }
-
+            
         }
+    }
+    
+    private func binding(for key: CSCase) -> Binding<String> {
+        Binding<String>(
+            get: {
+                String(cases[key] ?? 0)
+            },
+            set: { newValue in
+                cases[key] = Int(newValue) ?? 0
+            }
+        )
     }
 }
 
 #Preview {
-    AddAccountView()
+    AddAccountView(accounts: .constant([]))
 }

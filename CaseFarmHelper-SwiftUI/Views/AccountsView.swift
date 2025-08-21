@@ -10,15 +10,28 @@ import SwiftUI
 struct AccountsView: View {
     
     @State private var isPresentedAddAccount: Bool = false
+    @State var accounts: [Account] = [
+        
+    ]
     
     var body: some View {
         NavigationStack {
             List {
-                
+                ForEach(accounts) { account in
+                    Button {
+                        
+                    } label: {
+                        HStack {
+                            Text(account.profileName)
+                            Spacer()
+                            Text("Cases: \(account.getCasesCount)")
+                        }
+                    }
+                }
             }
             .navigationTitle("Accounts")
             .navigationDestination(isPresented: $isPresentedAddAccount, destination: {
-                AddAccountView()
+                AddAccountView(accounts: $accounts)
             })
             .toolbar {
                 Button {
