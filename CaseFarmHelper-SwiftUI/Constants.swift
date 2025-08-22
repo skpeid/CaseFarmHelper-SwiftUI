@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct Constants {
-    
     static let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),

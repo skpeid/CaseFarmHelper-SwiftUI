@@ -8,11 +8,62 @@
 import SwiftUI
 
 struct AddTradeView: View {
+    
+    @EnvironmentObject var accountsViewModel: AccountsViewModel
+    @ObservedObject var viewModel: OperationViewModel
+    
+    @State var sender: Account?
+    @State var receiver: Account?
+    @State var selectedCase: CSCase?
+    
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Trade")
+            HStack {
+                VStack {
+                    Text("Sender")
+                    Picker("Account 1", selection: $sender) {
+                        ForEach(accountsViewModel.accounts) { account in
+                            Text(account.profileName)
+                                .tag(account as Account?)
+                        }
+                    }
+                }
+                VStack {
+                    Text("Case")
+                    Picker("Case", selection: $selectedCase) {
+                        ForEach(CSCase.allCases) { csCase in
+                            Text(csCase.displayName)
+                                .tag(csCase as CSCase?)
+                        }
+                    }
+                }
+                VStack {
+                    Text("Receiver")
+                    Picker("Account 2", selection: $receiver) {
+                        ForEach(accountsViewModel.accounts) { account in
+                            Text(account.profileName)
+                                .tag(account as Account?)
+                        }
+                    }
+                }
+                
+            }
+            Button {
+                guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
+                let newTrade = Trade(sender: sender, receiver: receiver, caseTraded: selectedCase)
+                viewModel.saveTrade(newTrade)
+                dismiss()
+            } label: {
+                Text("Save")
+            }
+            
+        }
     }
 }
 
 #Preview {
-    AddTradeView()
+    AddTradeView(viewModel: OperationViewModel())
 }

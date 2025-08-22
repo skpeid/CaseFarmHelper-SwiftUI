@@ -22,7 +22,7 @@ struct AccountsView: View {
                         Text(account.profileName)
                         Spacer()
                         Text("Cases: \(account.getTotalCasesAmount)")
-                    }   
+                    }
                 }
             }
             .navigationTitle("Accounts")
