@@ -15,10 +15,17 @@ final class Account: Identifiable, ObservableObject, Hashable {
     @Published var profileName: String
     @Published var username: String
     @Published var cases: [CSCase: Int] = [:]
+    @Published var profileImage: UIImage?
     
-    init(profileName: String, username: String, cases: [CSCase : Int] = [:]) {
+    init(profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil) {
         self.profileName = profileName
         self.username = username
+        self.profileImage = profileImage
+//        var dict = [CSCase: Int]()
+//        for csCase in CSCase.allCases {
+//            dict[csCase] = cases[csCase] ?? 0
+//        }
+//        self.cases = dict
         self.cases = cases
     }
     

@@ -19,6 +19,17 @@ struct AccountsView: View {
             List(viewModel.accounts) { account in
                 NavigationLink(value: account) {
                     HStack {
+                        if let image = account.profileImage {
+                            Image(uiImage: image)
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .clipShape(Circle())
+                        } else {
+                            Circle()
+                                .fill(Color.gray)
+                                .frame(width: 50, height: 50)
+                                .overlay(Image(systemName: "person"))
+                        }
                         Text(account.profileName)
                         Spacer()
                         Text("Cases: \(account.getTotalCasesAmount)")

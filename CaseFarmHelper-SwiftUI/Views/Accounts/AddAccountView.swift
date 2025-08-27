@@ -9,15 +9,32 @@ import SwiftUI
 
 struct AddAccountView: View {
     
-    @State var profileName: String = ""
-    @State var username: String = ""
-    @State var cases: [CSCase: Int] = [:]
+    @State private var profileName: String = ""
+    @State private var username: String = ""
+    @State private var selectedImage: UIImage?
+    @State private var showImagePicker: Bool = false
+    @State private var cases: [CSCase: Int] = [:]
     
     @EnvironmentObject var viewModel: AppViewModel
+    @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {
+            HStack {
+                if let image = selectedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .clipShape(Circle())
+                } else {
+                    Circle()
+                        .fill(Color.gray)
+                        .frame(width: 50, height: 50)
+                        .overlay(Text("Tap"))
+                }
+            }
+            .onTapGesture { showImagePicker.toggle() }
             Text("Profile Name")
             TextField("Profile Name", text: $profileName)
                 .textFieldStyle(.roundedBorder)
@@ -39,13 +56,16 @@ struct AddAccountView: View {
             }
             Spacer()
             Button {
-                let newAccount = Account(profileName: profileName, username: username, cases: cases)
+                guard let image = selectedImage else { return }
+                let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: image)
                 viewModel.addAccount(newAccount)
                 dismiss()
             } label: {
                 Text("Add Account")
             }
-            
+            .sheet(isPresented: $showImagePicker) {
+                ImagePicker(selectedImage: $selectedImage)
+            }
         }
     }
     
@@ -61,6 +81,36 @@ struct AddAccountView: View {
     }
 }
 
-#Preview {
-    AddAccountView()
+// MARK: ImagePicker for choosing profile image from Photo Library
+struct ImagePicker: UIViewControllerRepresentable {
+    @Environment(\.presentationMode) var presentationMode
+    var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @Binding var selectedImage: UIImage?
+    
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+        let parent: ImagePicker
+        init(_ parent: ImagePicker) {
+            self.parent = parent
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let uiImage = info[.originalImage] as? UIImage {
+                parent.selectedImage = uiImage
+            }
+            parent.presentationMode.wrappedValue.dismiss()
+        }
+    }
+    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 }
