@@ -64,12 +64,12 @@ struct DropCellView: View {
             if let image = drop.account.profileImage {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .clipShape(Circle())
             } else {
                 Circle()
                     .fill(Color.gray)
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .overlay(Image(systemName: "person"))
                     .foregroundStyle(.white)
             }
@@ -94,12 +94,12 @@ struct TradeCellView: View {
             if let image = trade.sender.profileImage {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .clipShape(Circle())
             } else {
                 Circle()
                     .fill(Color.gray)
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .overlay(Image(systemName: "person"))
                     .foregroundStyle(.white)
             }
@@ -108,12 +108,12 @@ struct TradeCellView: View {
             if let image = trade.receiver.profileImage {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .clipShape(Circle())
             } else {
                 Circle()
                     .fill(Color.gray)
-                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
                     .overlay(Image(systemName: "person"))
                     .foregroundStyle(.white)
             }
