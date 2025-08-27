@@ -12,11 +12,11 @@ struct AccountsView: View {
     @State private var isPresentedAddAccount: Bool = false
     @State private var isPresentedAccountDetails: Bool = false
     
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     
     var body: some View {
         NavigationStack {
-            List(accountsViewModel.accounts) { account in
+            List(viewModel.accounts) { account in
                 NavigationLink(value: account) {
                     HStack {
                         Text(account.profileName)

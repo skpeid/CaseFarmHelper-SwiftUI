@@ -13,8 +13,7 @@ struct AddAccountView: View {
     @State var username: String = ""
     @State var cases: [CSCase: Int] = [:]
     
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
-    
+    @EnvironmentObject var viewModel: AppViewModel
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -41,7 +40,7 @@ struct AddAccountView: View {
             Spacer()
             Button {
                 let newAccount = Account(profileName: profileName, username: username, cases: cases)
-                accountsViewModel.accounts.append(newAccount)
+                viewModel.addAccount(newAccount)
                 dismiss()
             } label: {
                 Text("Add Account")

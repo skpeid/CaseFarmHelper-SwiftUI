@@ -9,8 +9,7 @@ import SwiftUI
 
 struct DashboardView: View {
     
-    @StateObject var viewModel = OperationViewModel()
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     
     @State private var isPresentedAddDrop: Bool = false
     @State private var isPresentedTrade: Bool = false
@@ -34,6 +33,7 @@ struct DashboardView: View {
                                 Text(trade.receiver.profileName)
                                 Spacer()
                                 Text(trade.caseTraded.displayName)
+                                Text(trade.formattedDate)
                             }
                         default:
                             Text("Unknown operation")
@@ -57,10 +57,10 @@ struct DashboardView: View {
             }
             .navigationTitle("Dashboard")
             .navigationDestination(isPresented: $isPresentedAddDrop) {
-                AddDropView(viewModel: viewModel)
+                AddDropView().environmentObject(viewModel)
             }
             .navigationDestination(isPresented: $isPresentedTrade) {
-                AddTradeView(viewModel: viewModel)
+                AddTradeView().environmentObject(viewModel)
             }
         }
     }

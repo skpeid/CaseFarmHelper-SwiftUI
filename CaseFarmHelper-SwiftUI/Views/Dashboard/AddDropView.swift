@@ -9,8 +9,7 @@ import SwiftUI
 
 struct AddDropView: View {
     
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
-    @ObservedObject var viewModel: OperationViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     
     @State var selectedAccount: Account?
     @State var selectedCase: CSCase?
@@ -24,7 +23,7 @@ struct AddDropView: View {
                 VStack {
                     Text("Choose Account")
                     Picker("Account", selection: $selectedAccount) {
-                        ForEach(accountsViewModel.accounts) { account in
+                        ForEach(viewModel.accounts) { account in
                             Text(account.profileName)
                                 .tag(account as Account?)
                         }
@@ -43,8 +42,7 @@ struct AddDropView: View {
             }
             Button {
                 guard let selectedAccount = selectedAccount, let selectedCase = selectedCase else { return }
-                let newDrop = Drop(account: selectedAccount, caseDropped: selectedCase)
-                viewModel.addDrop(newDrop)
+                viewModel.addDrop(to: selectedAccount, csCase: selectedCase)
                 dismiss()
             } label: {
                 Text("Save")
@@ -52,8 +50,4 @@ struct AddDropView: View {
 
         }
     }
-}
-
-#Preview {
-    AddDropView(viewModel: OperationViewModel())
 }

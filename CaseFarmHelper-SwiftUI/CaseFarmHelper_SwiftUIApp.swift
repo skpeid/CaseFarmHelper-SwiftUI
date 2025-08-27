@@ -10,12 +10,10 @@ import SwiftUI
 @main
 struct CaseFarmHelper_SwiftUIApp: App {
     
-    @StateObject var accountsViewModel = AccountsViewModel()
-    
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environmentObject(accountsViewModel)
+                
         }
     }
 }

@@ -9,8 +9,7 @@ import SwiftUI
 
 struct AddTradeView: View {
     
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
-    @ObservedObject var viewModel: OperationViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     
     @State var sender: Account?
     @State var receiver: Account?
@@ -25,7 +24,7 @@ struct AddTradeView: View {
                 VStack {
                     Text("Sender")
                     Picker("Account 1", selection: $sender) {
-                        ForEach(accountsViewModel.accounts) { account in
+                        ForEach(viewModel.accounts) { account in
                             Text(account.profileName)
                                 .tag(account as Account?)
                         }
@@ -43,7 +42,7 @@ struct AddTradeView: View {
                 VStack {
                     Text("Receiver")
                     Picker("Account 2", selection: $receiver) {
-                        ForEach(accountsViewModel.accounts) { account in
+                        ForEach(viewModel.accounts) { account in
                             Text(account.profileName)
                                 .tag(account as Account?)
                         }
@@ -53,8 +52,7 @@ struct AddTradeView: View {
             }
             Button {
                 guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
-                let newTrade = Trade(sender: sender, receiver: receiver, caseTraded: selectedCase)
-                viewModel.saveTrade(newTrade)
+                viewModel.saveTrade(from: sender, to: receiver, csCase: selectedCase)
                 dismiss()
             } label: {
                 Text("Save")
@@ -62,8 +60,4 @@ struct AddTradeView: View {
             
         }
     }
-}
-
-#Preview {
-    AddTradeView(viewModel: OperationViewModel())
 }

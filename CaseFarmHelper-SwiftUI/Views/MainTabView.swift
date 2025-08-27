@@ -9,19 +9,22 @@ import SwiftUI
 
 struct MainTabView: View {
     
-    @EnvironmentObject var accountsViewModel: AccountsViewModel
+    @StateObject private var viewModel = AppViewModel()
     
     var body: some View {
         TabView {
             DashboardView()
+                .environmentObject(viewModel)
                 .tabItem {
                     Label("Dashboard", systemImage: "list.dash")
                 }
             AccountsView()
+                .environmentObject(viewModel)
                 .tabItem {
                     Label("Accounts", systemImage: "person.3")
                 }
             StatsView()
+                .environmentObject(viewModel)
                 .tabItem {
                     Label("Stats", systemImage: "chart.line.uptrend.xyaxis")
                 }
