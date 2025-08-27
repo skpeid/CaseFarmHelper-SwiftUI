@@ -17,4 +17,10 @@ class Operation: Identifiable {
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
+    
+    var monthDayString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM dd"
+        return formatter.string(from: date)
+    }
 }

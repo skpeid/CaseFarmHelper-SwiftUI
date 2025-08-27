@@ -13,4 +13,7 @@ struct Constants {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
+    
+    static let dashboardAvatarSize: CGFloat = 48
+    static let dashboardCaseSize: CGFloat = 64
 }

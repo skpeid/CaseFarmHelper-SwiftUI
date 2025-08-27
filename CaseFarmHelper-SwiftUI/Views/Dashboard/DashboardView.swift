@@ -21,20 +21,9 @@ struct DashboardView: View {
                     ForEach(viewModel.operations) { operation in
                         switch operation {
                         case let drop as Drop:
-                            HStack {
-                                Text(drop.account.profileName)
-                                Spacer()
-                                Text(drop.caseDropped.displayName)
-                                Text(drop.formattedDate)
-                            }
+                            DropCellView(drop: drop)
                         case let trade as Trade:
-                            HStack {
-                                Text(trade.sender.profileName + "  -> ")
-                                Text(trade.receiver.profileName)
-                                Spacer()
-                                Text(trade.caseTraded.displayName)
-                                Text(trade.formattedDate)
-                            }
+                            TradeCellView(trade: trade)
                         default:
                             Text("Unknown operation")
                         }
@@ -66,6 +55,75 @@ struct DashboardView: View {
     }
 }
 
-#Preview {
-    DashboardView()
+//MARK: - Drop Cell
+struct DropCellView: View {
+    let drop: Drop
+    
+    var body: some View {
+        HStack {
+            if let image = drop.account.profileImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Color.gray)
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .overlay(Image(systemName: "person"))
+                    .foregroundStyle(.white)
+            }
+            Spacer()
+            Image(systemName: "plus")
+                .font(.system(size: 18, weight: .semibold))
+            Image(drop.caseDropped.imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+            Text(drop.monthDayString)
+        }
+    }
+}
+
+//MARK: - Trade Cell
+struct TradeCellView: View {
+    let trade: Trade
+    
+    var body: some View {
+        HStack {
+            if let image = trade.sender.profileImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Color.gray)
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .overlay(Image(systemName: "person"))
+                    .foregroundStyle(.white)
+            }
+            Image(systemName: "arrow.left.arrow.right")
+                .font(.system(size: 18, weight: .semibold))
+            if let image = trade.receiver.profileImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Color.gray)
+                    .frame(width: Constants.dashboardAvatarSize, height: Constants.dashboardAvatarSize)
+                    .overlay(Image(systemName: "person"))
+                    .foregroundStyle(.white)
+            }
+            Spacer()
+            Image(trade.caseTraded.imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+            
+            Text(trade.monthDayString)
+        }
+    }
 }
