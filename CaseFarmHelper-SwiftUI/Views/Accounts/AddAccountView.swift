@@ -21,26 +21,35 @@ struct AddAccountView: View {
     
     var body: some View {
         VStack {
-            HStack {
+            HStack(alignment: .center) {
                 if let image = selectedImage {
                     Image(uiImage: image)
                         .resizable()
-                        .frame(width: 50, height: 50)
+                        .frame(width: 100, height: 100)
                         .clipShape(Circle())
                 } else {
                     Circle()
                         .fill(Color.gray)
-                        .frame(width: 50, height: 50)
-                        .overlay(Text("Tap"))
+                        .frame(width: 100, height: 100)
+                        .overlay(Image(systemName: "person"))
+                        .foregroundStyle(.white)
+                        .font(.system(size: 28))
                 }
+                VStack {
+                    Text("Profile Name")
+                    TextField("Profile Name", text: $profileName)
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.bottom)
+                    Text("Username")
+                    TextField("Username", text: $username)
+                        .textFieldStyle(.roundedBorder)
+                }
+                .padding(.horizontal)
             }
-            .onTapGesture { showImagePicker.toggle() }
-            Text("Profile Name")
-            TextField("Profile Name", text: $profileName)
-                .textFieldStyle(.roundedBorder)
-            Text("Username")
-            TextField("Username", text: $username)
-                .textFieldStyle(.roundedBorder)
+            .padding()
+            .onTapGesture {
+                showImagePicker.toggle()
+            }
             ForEach(CSCase.allCases) { csCase in
                 HStack {
                     Image(csCase.imageName)
@@ -67,6 +76,7 @@ struct AddAccountView: View {
                 ImagePicker(selectedImage: $selectedImage)
             }
         }
+        .padding()
     }
     
     private func binding(for key: CSCase) -> Binding<String> {

@@ -18,22 +18,7 @@ struct AccountsView: View {
         NavigationStack {
             List(viewModel.accounts) { account in
                 NavigationLink(value: account) {
-                    HStack {
-                        if let image = account.profileImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
-                        } else {
-                            Circle()
-                                .fill(Color.gray)
-                                .frame(width: 50, height: 50)
-                                .overlay(Image(systemName: "person"))
-                        }
-                        Text(account.profileName)
-                        Spacer()
-                        Text("Cases: \(account.getTotalCasesAmount)")
-                    }
+                    AccountCellView(account: account)
                 }
             }
             .navigationTitle("Accounts")
@@ -55,6 +40,27 @@ struct AccountsView: View {
     }
 }
 
-#Preview {
-    AccountsView()
+struct AccountCellView: View {
+    let account: Account
+    
+    var body: some View {
+        HStack {
+            if let image = account.profileImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Color.gray)
+                    .frame(width: 50, height: 50)
+                    .overlay(Image(systemName: "person"))
+                    .foregroundStyle(.white)
+            }
+            Text(account.profileName)
+                .padding()
+            Spacer()
+            Text("Cases: \(account.getTotalCasesAmount)")
+        }
+    }
 }

@@ -19,15 +19,15 @@ enum CSCase: String, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .dreamsAndNightmares:
-            return "Dreams and Nigthmares"
+            return "Dreams and Nigthmares Case"
         case .recoil:
-            return "Recoil"
+            return "Recoil Case"
         case .revolution:
-            return "Revolution"
+            return "Revolution Case"
         case .fracture:
-            return "Fracture"
+            return "Fracture Case"
         case .kilowatt:
-            return "Kilowatt"
+            return "Kilowatt Case"
         }
     }
     
