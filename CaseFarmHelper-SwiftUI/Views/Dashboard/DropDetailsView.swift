@@ -59,7 +59,7 @@ struct DropDetailsView: View {
             Spacer()
             Divider()
             VStack(alignment: .center) {
-                Text("Date and time: ") + Text(drop.formattedDate).fontWeight(.bold)
+                Text("Date and time: ") + Text(drop.fullDateString).fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
             

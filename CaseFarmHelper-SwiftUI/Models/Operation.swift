@@ -11,7 +11,7 @@ class Operation: Identifiable {
     let id = UUID()
     let date = Date()
     
-    var formattedDate: String {
+    var fullDateString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM yyyy, H:mm"
         return formatter.string(from: date)

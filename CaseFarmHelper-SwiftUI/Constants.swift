@@ -16,5 +16,8 @@ struct Constants {
     
     static let menuAvatarSize: CGFloat = 48
     static let detailsAvatarSize: CGFloat = 82
-    static let dashboardCaseSize: CGFloat = 64
+    static let dashboardCaseSize: CGFloat = 50
+    
+    //MARK: Fonts
+    static let dashboardDateFont: Font = .footnote
 }

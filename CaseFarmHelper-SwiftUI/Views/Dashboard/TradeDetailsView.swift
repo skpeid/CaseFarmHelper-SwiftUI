@@ -58,10 +58,11 @@ struct TradeDetailsView: View {
                             .frame(width: 120, height: 120)
                             .padding(.trailing)
                     }
+                    .padding()
                 }
             } else {
                 let sortedCases = trade.casesTraded.sorted { $0.value > $1.value }
-                VStack(alignment: .center) {
+                VStack(alignment: .leading) {
                     Text("has received") + Text(" \(trade.totalTraded) cases").fontWeight(.bold) + Text(" from ") + Text(trade.sender.profileName).fontWeight(.bold)
                     LazyVGrid(columns: Constants.columns) {
                         ForEach(Array(sortedCases), id: \.key) { csCase, amount in
@@ -85,7 +86,7 @@ struct TradeDetailsView: View {
             Spacer()
             Divider()
             VStack(alignment: .center) {
-                Text("Date and time: ") + Text(trade.formattedDate).fontWeight(.bold)
+                Text("Date and time: ") + Text(trade.fullDateString).fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
         }

@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct CaseFarmHelper_SwiftUIApp: App {
-    
     var body: some Scene {
         WindowGroup {
             MainTabView()

@@ -21,11 +21,6 @@ final class Account: Identifiable, ObservableObject, Hashable {
         self.profileName = profileName
         self.username = username
         self.profileImage = profileImage
-        //        var dict = [CSCase: Int]()
-        //        for csCase in CSCase.allCases {
-        //            dict[csCase] = cases[csCase] ?? 0
-        //        }
-        //        self.cases = dict
         self.cases = cases
     }
     

@@ -12,10 +12,12 @@ struct DashboardView: View {
     @EnvironmentObject var viewModel: AppViewModel
     
     @State private var isPresentedAddDrop: Bool = false
-    @State private var isPresentedTrade: Bool = false
+    @State private var isPresentedAddTrade: Bool = false
     @State private var isPresentedDropDetails: Bool = false
+    @State private var isPresentedTradeDetails: Bool = false
     
     @State private var selectedDrop: Drop? = nil
+    @State private var selectedTrade: Trade? = nil
     
     var body: some View {
         NavigationStack {
@@ -28,19 +30,25 @@ struct DashboardView: View {
                                 selectedDrop = drop
                             } label: {
                                 DropCellView(drop: drop)
+                                    .foregroundStyle(.black)
                             }
-
+                            
                         case let trade as Trade:
-                            TradeCellView(trade: trade)
+                            Button {
+                                selectedTrade = trade
+                            } label: {
+                                TradeCellView(trade: trade)
+                                    .foregroundStyle(.black)
+                            }
                         default:
-                            Text("Unknown operation")
+                            Text("Unexpected Error")
                         }
                     }
                 }
                 Spacer()
                 HStack {
                     Button {
-                        isPresentedTrade.toggle()
+                        isPresentedAddTrade.toggle()
                     } label: {
                         Image(systemName: "arrow.left.arrow.right")
                             .font(.system(size: 24, weight: .semibold))
@@ -68,12 +76,16 @@ struct DashboardView: View {
             .navigationDestination(isPresented: $isPresentedAddDrop) {
                 AddDropView().environmentObject(viewModel)
             }
-            .navigationDestination(isPresented: $isPresentedTrade) {
+            .navigationDestination(isPresented: $isPresentedAddTrade) {
                 AddTradeView().environmentObject(viewModel)
             }
             .sheet(item: $selectedDrop) { drop in
                 DropDetailsView(drop: drop)
                     .presentationDetents([.height(355)])
+            }
+            .sheet(item: $selectedTrade) { trade in
+                TradeDetailsView(trade: trade)
+                    .presentationDetents([.height(600)])
             }
         }
     }
@@ -97,14 +109,22 @@ struct DropCellView: View {
                     .overlay(Image(systemName: "person"))
                     .foregroundStyle(.white)
             }
+            Text(drop.account.profileName).fontWeight(.bold)
             Spacer()
-            Image(systemName: "plus")
-                .font(.system(size: 18, weight: .semibold))
-            Image(drop.caseDropped.imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
-            Text(drop.monthDayString)
+            HStack {
+                Image(systemName: "plus")
+                    .font(.headline)
+                    .foregroundStyle(.green)
+                VStack {
+                    Image(drop.caseDropped.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+                    Text(drop.monthDayString)
+                        .font(.footnote)
+                        .foregroundStyle(.gray)
+                }
+            }
         }
     }
 }
@@ -142,12 +162,24 @@ struct TradeCellView: View {
                     .foregroundStyle(.white)
             }
             Spacer()
-//            Image(trade.casesTraded.imageName)
-//                .resizable()
-//                .scaledToFit()
-//                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+            //            Image(trade.casesTraded.imageName)
+            //                .resizable()
+            //                .scaledToFit()
+            //                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
             
-            Text(trade.monthDayString)
+            HStack {
+                Image(systemName: "arrow.right.arrow.left")
+                    .font(.headline)
+                    .foregroundStyle(.orange)
+                VStack {
+                    Text("x1")
+                        .font(.headline)
+                        .frame(height: Constants.dashboardCaseSize)
+                    Text(trade.monthDayString)
+                        .font(.footnote)
+                        .foregroundStyle(.gray)
+                }
+            }
         }
     }
 }
