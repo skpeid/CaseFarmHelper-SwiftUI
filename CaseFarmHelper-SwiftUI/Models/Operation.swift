@@ -13,8 +13,7 @@ class Operation: Identifiable {
     
     var formattedDate: String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
+        formatter.dateFormat = "d MMMM yyyy, H:mm"
         return formatter.string(from: date)
     }
     

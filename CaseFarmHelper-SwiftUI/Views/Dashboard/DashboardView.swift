@@ -13,6 +13,9 @@ struct DashboardView: View {
     
     @State private var isPresentedAddDrop: Bool = false
     @State private var isPresentedTrade: Bool = false
+    @State private var isPresentedDropDetails: Bool = false
+    
+    @State private var selectedDrop: Drop? = nil
     
     var body: some View {
         NavigationStack {
@@ -21,7 +24,12 @@ struct DashboardView: View {
                     ForEach(viewModel.operations) { operation in
                         switch operation {
                         case let drop as Drop:
-                            DropCellView(drop: drop)
+                            Button {
+                                selectedDrop = drop
+                            } label: {
+                                DropCellView(drop: drop)
+                            }
+
                         case let trade as Trade:
                             TradeCellView(trade: trade)
                         default:
@@ -50,6 +58,10 @@ struct DashboardView: View {
             }
             .navigationDestination(isPresented: $isPresentedTrade) {
                 AddTradeView().environmentObject(viewModel)
+            }
+            .sheet(item: $selectedDrop) { drop in
+                DropDetailsView(drop: drop)
+                    .presentationDetents([.height(355)])
             }
         }
     }

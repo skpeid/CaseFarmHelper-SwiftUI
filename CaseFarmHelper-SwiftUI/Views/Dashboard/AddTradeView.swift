@@ -48,7 +48,6 @@ struct AddTradeView: View {
                         }
                     }
                 }
-                
             }
             Button {
                 guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
@@ -57,7 +56,6 @@ struct AddTradeView: View {
             } label: {
                 Text("Save")
             }
-            
         }
     }
 }

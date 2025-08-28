@@ -12,10 +12,19 @@ struct DropDetailsView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Drop")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            Text("Account:")
+            HStack {
+                Text("Drop")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                Spacer()
+                Button {
+                    
+                } label: {
+                    Image(systemName: "multiply")
+                        .foregroundStyle(.black)
+                        .font(.system(size: 24))
+                }
+            }
             HStack {
                 if let image = drop.account.profileImage {
                     Image(uiImage: image)
@@ -38,16 +47,20 @@ struct DropDetailsView: View {
                         .foregroundStyle(.gray)
                 }
             }
-            Text("has collected ") + Text(drop.caseDropped.displayName).fontWeight(.bold) + Text(" from weekly drop")
-            VStack {
+            HStack {
+                Text("has collected ") + Text(drop.caseDropped.displayName).fontWeight(.bold) + Text(" from weekly drop")
                 Image(drop.caseDropped.imageName)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 120, height: 120)
+                    .padding(.leading)
+            }
+            VStack(alignment: .center) {
+                Text("Date and time: ") + Text(drop.formattedDate).fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
         }
-        Text("Date and time: \(drop.formattedDate)")
+        .padding()
     }
 }
 
