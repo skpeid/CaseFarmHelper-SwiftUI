@@ -11,9 +11,9 @@ struct AddTradeView: View {
     
     @EnvironmentObject var viewModel: AppViewModel
     
-    @State var sender: Account?
-    @State var receiver: Account?
-    @State var selectedCase: CSCase?
+    @State private var sender: Account?
+    @State private var receiver: Account?
+    @State private var cases: [CSCase: Int] = [:]
     
     @Environment(\.dismiss) var dismiss
     
@@ -31,15 +31,6 @@ struct AddTradeView: View {
                     }
                 }
                 VStack {
-                    Text("Case")
-                    Picker("Case", selection: $selectedCase) {
-                        ForEach(CSCase.allCases) { csCase in
-                            Text(csCase.displayName)
-                                .tag(csCase as CSCase?)
-                        }
-                    }
-                }
-                VStack {
                     Text("Receiver")
                     Picker("Account 2", selection: $receiver) {
                         ForEach(viewModel.accounts) { account in
@@ -49,13 +40,39 @@ struct AddTradeView: View {
                     }
                 }
             }
+            ForEach(CSCase.allCases) { csCase in
+                HStack {
+                    Image(csCase.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50)
+                    Text(csCase.displayName)
+                    Spacer()
+                    TextField("0", text: binding(for: csCase))
+                        .frame(width: 50)
+                        .keyboardType(.numberPad)
+                }
+            }
             Button {
-                guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
-                viewModel.saveTrade(from: sender, to: receiver, csCase: selectedCase)
+                //                guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
+                //                viewModel.saveTrade(from: sender, to: receiver, csCase: selectedCase)
+                guard let sender, let receiver, !cases.isEmpty else { return }
+                viewModel.saveTrade(from: sender, to: receiver, cases: cases)
                 dismiss()
             } label: {
                 Text("Save")
             }
         }
+    }
+    
+    private func binding(for key: CSCase) -> Binding<String> {
+        Binding<String>(
+            get: {
+                String(cases[key] ?? 0)
+            },
+            set: { newValue in
+                cases[key] = Int(newValue) ?? 0
+            }
+        )
     }
 }

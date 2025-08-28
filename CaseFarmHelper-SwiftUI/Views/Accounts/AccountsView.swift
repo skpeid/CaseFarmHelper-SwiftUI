@@ -41,7 +41,7 @@ struct AccountsView: View {
 }
 
 struct AccountCellView: View {
-    let account: Account
+    @ObservedObject var account: Account
     
     var body: some View {
         HStack {

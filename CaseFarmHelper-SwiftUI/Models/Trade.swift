@@ -10,11 +10,11 @@ import Foundation
 final class Trade: Operation {
     let sender: Account
     let receiver: Account
-    let caseTraded: CSCase
+    let casesTraded: [CSCase: Int]
     
-    init(sender: Account, receiver: Account, caseTraded: CSCase) {
+    init(sender: Account, receiver: Account, casesTraded: [CSCase: Int]) {
         self.sender = sender
         self.receiver = receiver
-        self.caseTraded = caseTraded
+        self.casesTraded = casesTraded
     }
 }

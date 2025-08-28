@@ -130,10 +130,10 @@ struct TradeCellView: View {
                     .foregroundStyle(.white)
             }
             Spacer()
-            Image(trade.caseTraded.imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+//            Image(trade.casesTraded.imageName)
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
             
             Text(trade.monthDayString)
         }
