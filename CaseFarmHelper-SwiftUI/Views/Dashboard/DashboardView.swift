@@ -42,12 +42,24 @@ struct DashboardView: View {
                     Button {
                         isPresentedTrade.toggle()
                     } label: {
-                        Text("Trade")
+                        Image(systemName: "arrow.left.arrow.right")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 60, height: 20)
+                            .padding()
+                            .background(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     Button {
                         isPresentedAddDrop.toggle()
                     } label: {
-                        Text("Add Drop")
+                        Image(systemName: "plus")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 60, height: 20)
+                            .padding()
+                            .background(.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     
                 }

@@ -48,17 +48,20 @@ struct DropDetailsView: View {
                 }
             }
             HStack {
-                Text("has collected ") + Text(drop.caseDropped.displayName).fontWeight(.bold) + Text(" from weekly drop")
+                Text("has collected ") + Text(drop.caseDropped.displayName).fontWeight(.bold)
+                Spacer()
                 Image(drop.caseDropped.imageName)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 120, height: 120)
-                    .padding(.leading)
+                    .padding(.trailing)
             }
+            Divider()
             VStack(alignment: .center) {
                 Text("Date and time: ") + Text(drop.formattedDate).fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
+            Spacer()
         }
         .padding()
     }
