@@ -22,7 +22,8 @@ final class AppViewModel: ObservableObject {
         operations = [
             Drop(account: dummyAcc1, caseDropped: .dreamsAndNightmares),
             Trade(sender: dummyAcc2, receiver: dummyAcc1, casesTraded: [.recoil: 1]),
-            Drop(account: dummyAcc3, caseDropped: .fracture)
+            Drop(account: dummyAcc3, caseDropped: .fracture),
+            Trade(sender: dummyAcc4, receiver: dummyAcc1, casesTraded: [.recoil:100, .fracture:100, .dreamsAndNightmares: 100, .kilowatt: 100, .revolution: 100])
         ]
     }
     

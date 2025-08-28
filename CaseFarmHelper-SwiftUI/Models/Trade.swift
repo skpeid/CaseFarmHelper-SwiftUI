@@ -18,3 +18,13 @@ final class Trade: Operation {
         self.casesTraded = casesTraded
     }
 }
+
+extension Trade {
+    var isSingleCaseType: Bool {
+        casesTraded.count == 1
+    }
+    
+    var totalTraded: Int {
+        casesTraded.values.reduce(0, +)
+    }
+}
