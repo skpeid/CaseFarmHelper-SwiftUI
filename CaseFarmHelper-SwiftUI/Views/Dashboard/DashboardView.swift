@@ -97,7 +97,7 @@ struct DropCellView: View {
             HStack {
                 Image(systemName: "plus")
                     .font(.headline)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Constants.dropColor)
                 VStack {
                     Image(drop.caseDropped.imageName)
                         .resizable()
@@ -129,7 +129,7 @@ struct TradeCellView: View {
             HStack {
                 Image(systemName: "arrow.right.arrow.left")
                     .font(.headline)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Constants.tradeColor)
                 VStack {
                     Text("x\(trade.totalTraded)")
                         .font(.headline)

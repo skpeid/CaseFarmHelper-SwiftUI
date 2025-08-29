@@ -68,14 +68,11 @@ struct AddDropView: View {
                 }
             }
             Spacer()
-            Button {
+            RoundedButton(title: "Save") {
                 guard let selectedAccount = selectedAccount, let selectedCase = selectedCase else { return }
                 viewModel.addDrop(to: selectedAccount, csCase: selectedCase)
                 dismiss()
-            } label: {
-                Text("Save")
             }
-            
         }
         .padding()
         .navigationTitle("Add Drop")

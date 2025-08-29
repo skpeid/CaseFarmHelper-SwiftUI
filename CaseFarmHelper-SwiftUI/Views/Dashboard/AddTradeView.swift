@@ -82,12 +82,10 @@ struct AddTradeView: View {
 //                }
 //            }
             Spacer()
-            Button {
+            RoundedButton(title: "Save") {
                 guard let sender, let receiver, !cases.isEmpty else { return }
                 viewModel.saveTrade(from: sender, to: receiver, cases: cases)
                 dismiss()
-            } label: {
-                Text("Save")
             }
             .navigationTitle("Trade")
             .navigationBarTitleDisplayMode(.inline)

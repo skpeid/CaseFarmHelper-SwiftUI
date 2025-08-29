@@ -20,6 +20,7 @@ struct Constants {
     static let dashboardCaseSize: CGFloat = 50
     static let bigCaseSize: CGFloat = 100
     
-    //MARK: Fonts
-    static let dashboardDateFont: Font = .footnote
+    //MARK: Colors
+    static let tradeColor: Color = .indigo
+    static let dropColor: Color = .green
 }

@@ -22,19 +22,12 @@ struct AddAccountView: View {
     var body: some View {
         VStack {
             HStack(alignment: .center) {
-                if let image = selectedImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                } else {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: 100, height: 100)
-                        .overlay(Image(systemName: "person"))
-                        .foregroundStyle(.white)
-                        .font(.system(size: 28))
-                }
+                Circle()
+                    .fill(.gray)
+                    .frame(width: 100, height: 100)
+                    .overlay(Text("Select"))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 4)
                 VStack {
                     Text("Profile Name")
                     TextField("Profile Name", text: $profileName)
@@ -64,13 +57,11 @@ struct AddAccountView: View {
                 }
             }
             Spacer()
-            Button {
+            RoundedButton(title: "Add Account") {
                 guard let image = selectedImage else { return }
                 let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: image)
                 viewModel.addAccount(newAccount)
                 dismiss()
-            } label: {
-                Text("Add Account")
             }
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $selectedImage)
