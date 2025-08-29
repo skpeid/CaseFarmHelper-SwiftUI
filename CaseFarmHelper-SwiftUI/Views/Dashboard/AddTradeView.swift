@@ -19,40 +19,69 @@ struct AddTradeView: View {
     
     var body: some View {
         VStack {
-            Text("Trade")
             HStack {
-                VStack {
-                    Text("Sender")
-                    Picker("Account 1", selection: $sender) {
-                        ForEach(viewModel.accounts) { account in
-                            Text(account.profileName)
-                                .tag(account as Account?)
-                        }
-                    }
-                }
-                VStack {
-                    Text("Receiver")
-                    Picker("Account 2", selection: $receiver) {
-                        ForEach(viewModel.accounts) { account in
-                            Text(account.profileName)
-                                .tag(account as Account?)
-                        }
-                    }
-                }
-            }
-            ForEach(CSCase.allCases) { csCase in
                 HStack {
-                    Image(csCase.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50)
-                    Text(csCase.displayName)
-                    Spacer()
-                    TextField("0", text: binding(for: csCase))
-                        .frame(width: 50)
-                        .keyboardType(.numberPad)
+                    VStack {
+                        Text("From")
+                            .font(.headline)
+                        Picker("", selection: $sender) {
+                            Text("Select Sender").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                            ForEach(viewModel.accounts) { account in
+                                Text(account.profileName)
+                                    .tag(account as Account?)
+                            }
+                        }
+                    }
+//                    AccountAvatarView(image: sender?.profileImage, size: Constants.menuAvatarSize)
+                }
+                VStack {
+                    Text("To")
+                        .font(.headline)
+                    Picker("", selection: $receiver) {
+                        Text("Select Receiver").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                        ForEach(viewModel.accounts) { account in
+                            Text(account.profileName)
+                                .tag(account as Account?)
+                        }
+                    }
                 }
             }
+            .padding()
+            LazyVGrid(columns: Constants.caseColumns) {
+                ForEach(CSCase.allCases) { csCase in
+                    VStack {
+                        Image(csCase.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Constants.bigCaseSize)
+                        Text(csCase.displayName)
+                            .font(.caption)
+                        Stepper(value: binding(for: csCase), in: 0...99) {
+                            Text("\(cases[csCase, default: 0])")
+                                .frame(width: 30)
+                        }
+                    }
+//                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.black, lineWidth: 1)
+                    )
+                }
+            }
+//            ForEach(CSCase.allCases) { csCase in
+//                HStack {
+//                    Image(csCase.imageName)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: 50)
+//                    Text(csCase.displayName)
+//                    Spacer()
+//                    TextField("0", text: binding(for: csCase))
+//                        .frame(width: 50)
+//                        .keyboardType(.numberPad)
+//                }
+//            }
+            Spacer()
             Button {
                 guard let sender, let receiver, !cases.isEmpty else { return }
                 viewModel.saveTrade(from: sender, to: receiver, cases: cases)
@@ -60,17 +89,26 @@ struct AddTradeView: View {
             } label: {
                 Text("Save")
             }
+            .navigationTitle("Trade")
+            .navigationBarTitleDisplayMode(.inline)
         }
+        .padding()
     }
     
-    private func binding(for key: CSCase) -> Binding<String> {
-        Binding<String>(
-            get: {
-                String(cases[key] ?? 0)
-            },
-            set: { newValue in
-                cases[key] = Int(newValue) ?? 0
-            }
-        )
+    private func binding(for key: CSCase) -> Binding<Int> {
+        Binding(
+            get: { cases[key, default: 0] },
+            set: { cases[key] = $0 }
+            )
     }
+//    private func binding(for key: CSCase) -> Binding<String> {
+//        Binding<String>(
+//            get: {
+//                String(cases[key] ?? 0)
+//            },
+//            set: { newValue in
+//                cases[key] = Int(newValue) ?? 0
+//            }
+//        )
+//    }
 }
