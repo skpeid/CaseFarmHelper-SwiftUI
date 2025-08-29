@@ -21,23 +21,11 @@ struct TradeDetailsView: View {
                     
                 } label: {
                     Image(systemName: "multiply")
-                        .foregroundStyle(.black)
                         .font(.system(size: 24))
                 }
             }
             HStack {
-                if let image = trade.receiver.profileImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .frame(width: Constants.detailsAvatarSize, height: Constants.detailsAvatarSize)
-                        .clipShape(Circle())
-                } else {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: Constants.detailsAvatarSize, height: Constants.detailsAvatarSize)
-                        .overlay(Image(systemName: "person"))
-                        .foregroundStyle(.white)
-                }
+                AccountAvatarView(image: trade.receiver.profileImage, size: Constants.detailsAvatarSize)
                 VStack(alignment: .leading) {
                     Text(trade.receiver.profileName)
                         .font(.title2)

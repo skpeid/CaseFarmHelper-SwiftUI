@@ -21,23 +21,11 @@ struct DropDetailsView: View {
                     
                 } label: {
                     Image(systemName: "multiply")
-                        .foregroundStyle(.black)
                         .font(.system(size: 24))
                 }
             }
             HStack {
-                if let image = drop.account.profileImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .frame(width: Constants.detailsAvatarSize, height: Constants.detailsAvatarSize)
-                        .clipShape(Circle())
-                } else {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: Constants.detailsAvatarSize, height: Constants.detailsAvatarSize)
-                        .overlay(Image(systemName: "person"))
-                        .foregroundStyle(.white)
-                }
+                AccountAvatarView(image: drop.account.profileImage, size: Constants.detailsAvatarSize)
                 VStack(alignment: .leading) {
                     Text(drop.account.profileName)
                         .font(.title2)

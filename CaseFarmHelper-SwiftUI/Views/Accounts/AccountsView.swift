@@ -33,6 +33,7 @@ struct AccountsView: View {
                     isPresentedAddAccount.toggle()
                 } label: {
                     Image(systemName: "plus")
+                        .fontWeight(.semibold)
                 }
                 
             }
@@ -45,18 +46,7 @@ struct AccountCellView: View {
     
     var body: some View {
         HStack {
-            if let image = account.profileImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
-            } else {
-                Circle()
-                    .fill(Color.gray)
-                    .frame(width: 50, height: 50)
-                    .overlay(Image(systemName: "person"))
-                    .foregroundStyle(.white)
-            }
+            AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
             Text(account.profileName)
                 .padding()
             Spacer()

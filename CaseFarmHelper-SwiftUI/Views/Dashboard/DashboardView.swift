@@ -30,7 +30,6 @@ struct DashboardView: View {
                                 selectedDrop = drop
                             } label: {
                                 DropCellView(drop: drop)
-                                    .foregroundStyle(.black)
                             }
                             
                         case let trade as Trade:
@@ -38,41 +37,31 @@ struct DashboardView: View {
                                 selectedTrade = trade
                             } label: {
                                 TradeCellView(trade: trade)
-                                    .foregroundStyle(.black)
                             }
                         default:
                             Text("Unexpected Error")
                         }
                     }
                 }
-                Spacer()
-                HStack {
+            }
+            .navigationTitle("Dashboard")
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         isPresentedAddTrade.toggle()
                     } label: {
                         Image(systemName: "arrow.left.arrow.right")
-                            .font(.system(size: 24, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .frame(width: 60, height: 20)
-                            .padding()
-                            .background(.black)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .fontWeight(.semibold)
                     }
+                    
                     Button {
                         isPresentedAddDrop.toggle()
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 24, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .frame(width: 60, height: 20)
-                            .padding()
-                            .background(.black)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .fontWeight(.semibold)
                     }
-                    
                 }
             }
-            .navigationTitle("Dashboard")
             .navigationDestination(isPresented: $isPresentedAddDrop) {
                 AddDropView().environmentObject(viewModel)
             }
@@ -85,7 +74,7 @@ struct DashboardView: View {
             }
             .sheet(item: $selectedTrade) { trade in
                 TradeDetailsView(trade: trade)
-                    .presentationDetents([.height(600)])
+                    .presentationDetents([.large])
             }
         }
     }
@@ -97,19 +86,13 @@ struct DropCellView: View {
     
     var body: some View {
         HStack {
-            if let image = drop.account.profileImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .clipShape(Circle())
-            } else {
-                Circle()
-                    .fill(Color.gray)
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .overlay(Image(systemName: "person"))
-                    .foregroundStyle(.white)
+            AccountAvatarView(image: drop.account.profileImage, size: Constants.menuAvatarSize)
+            VStack(alignment: .leading) {
+                Text(drop.account.profileName).fontWeight(.bold)
+                Text("collected drop")
+                    .foregroundStyle(.gray)
+                    .font(.caption)
             }
-            Text(drop.account.profileName).fontWeight(.bold)
             Spacer()
             HStack {
                 Image(systemName: "plus")
@@ -135,44 +118,20 @@ struct TradeCellView: View {
     
     var body: some View {
         HStack {
-            if let image = trade.sender.profileImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .clipShape(Circle())
-            } else {
-                Circle()
-                    .fill(Color.gray)
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .overlay(Image(systemName: "person"))
-                    .foregroundStyle(.white)
-            }
-            Image(systemName: "arrow.left.arrow.right")
-                .font(.system(size: 18, weight: .semibold))
-            if let image = trade.receiver.profileImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .clipShape(Circle())
-            } else {
-                Circle()
-                    .fill(Color.gray)
-                    .frame(width: Constants.menuAvatarSize, height: Constants.menuAvatarSize)
-                    .overlay(Image(systemName: "person"))
-                    .foregroundStyle(.white)
+            AccountAvatarView(image: trade.receiver.profileImage, size: Constants.menuAvatarSize)
+            VStack(alignment: .leading) {
+                Text(trade.receiver.profileName).fontWeight(.bold)
+                Text("received trade from ")
+                    .foregroundStyle(.gray)
+                    .font(.caption) + Text(trade.sender.profileName).fontWeight(.semibold).font(.caption)
             }
             Spacer()
-            //            Image(trade.casesTraded.imageName)
-            //                .resizable()
-            //                .scaledToFit()
-            //                .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
-            
             HStack {
                 Image(systemName: "arrow.right.arrow.left")
                     .font(.headline)
                     .foregroundStyle(.orange)
                 VStack {
-                    Text("x1")
+                    Text("x\(trade.totalTraded)")
                         .font(.headline)
                         .frame(height: Constants.dashboardCaseSize)
                     Text(trade.monthDayString)
