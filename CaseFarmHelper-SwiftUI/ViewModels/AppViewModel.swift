@@ -17,7 +17,16 @@ final class AppViewModel: ObservableObject {
         let dummyAcc2 = Account(profileName: "jks", username: "syrazavr", cases: [.revolution:40, .kilowatt:13])
         let dummyAcc3 = Account(profileName: "azino", username: "", cases: [.recoil:1, .fracture:2, .dreamsAndNightmares: 10, .kilowatt: 20, .revolution: 30])
         let dummyAcc4 = Account(profileName: "MAJORKA", username: "Ohnepixel", cases: [.recoil:100, .fracture:100, .dreamsAndNightmares: 100, .kilowatt: 100, .revolution: 100])
-        accounts = [dummyAcc1, dummyAcc2, dummyAcc3, dummyAcc4]
+        accounts = [dummyAcc1, dummyAcc2, dummyAcc3, dummyAcc4,
+                    Account(profileName: "acc1 ", username: ""),
+                    Account(profileName: "2222", username: ""),
+                    Account(profileName: "3333", username: ""),
+                    Account(profileName: "4444", username: ""),
+                    Account(profileName: "555555", username: ""),
+                    Account(profileName: "666", username: ""),
+                    Account(profileName: "777", username: ""),
+                    Account(profileName: "8888", username: "")
+        ]
         
         operations = [
             Drop(account: dummyAcc1, caseDropped: .dreamsAndNightmares),

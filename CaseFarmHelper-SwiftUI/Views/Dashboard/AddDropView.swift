@@ -18,28 +18,56 @@ struct AddDropView: View {
     
     var body: some View {
         VStack {
-            Text("Add Drop")
-            HStack {
-                VStack {
-                    Text("Choose Account")
-                    Picker("Account", selection: $selectedAccount) {
-                        ForEach(viewModel.accounts) { account in
+            VStack(alignment: .leading) {
+//                Text("Select Account")
+//                    .font(.headline)
+//                    .padding(.bottom)
+                LazyVGrid(columns: Constants.accountColumns) {
+                    ForEach(viewModel.accounts) { account in
+                        VStack {
+                            AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
                             Text(account.profileName)
-                                .tag(account as Account?)
+                                .font(.caption2)
+                                .lineLimit(1)
+                        }
+                        .padding()
+                        .background(selectedAccount?.id == account.id ? .black.opacity(0.1) : .clear)
+                        .onTapGesture {
+                            if account == selectedAccount {
+                                selectedAccount = nil
+                            } else { selectedAccount = account }
                         }
                     }
                 }
-                VStack {
-                    Text("Case")
-                    Picker("Case", selection: $selectedCase) {
-                        ForEach(CSCase.allCases) { csCase in
-                            Text(csCase.displayName)
-                                .tag(csCase as CSCase?)
-                        }
-                    }
-                }
-                
             }
+            Divider()
+            VStack(alignment: .leading) {
+//                Text("Select Case")
+//                    .font(.headline)
+//                    .padding(.bottom)
+                LazyVGrid(columns: Constants.caseColumns) {
+                    ForEach(CSCase.allCases) { csCase in
+                        VStack {
+                            Image(csCase.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.bigCaseSize, height: Constants.bigCaseSize)
+                            Text(csCase.displayName)
+                                .font(.caption2)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                        }
+                        .padding()
+                        .background(selectedCase?.id == csCase.id ? .black.opacity(0.1) : .clear)
+                        .onTapGesture {
+                            if csCase == selectedCase {
+                                selectedCase = nil
+                            } else { selectedCase = csCase }
+                        }
+                    }
+                }
+            }
+            Spacer()
             Button {
                 guard let selectedAccount = selectedAccount, let selectedCase = selectedCase else { return }
                 viewModel.addDrop(to: selectedAccount, csCase: selectedCase)
@@ -47,7 +75,10 @@ struct AddDropView: View {
             } label: {
                 Text("Save")
             }
-
+            
         }
+        .padding()
+        .navigationTitle("Add Drop")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

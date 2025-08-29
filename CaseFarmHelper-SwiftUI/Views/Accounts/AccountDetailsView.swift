@@ -28,7 +28,7 @@ struct AccountDetailsView: View {
             if account.cases.isEmpty {
                 Text("No cases")
             } else {
-                LazyVGrid(columns: Constants.columns) {
+                LazyVGrid(columns: Constants.caseColumns) {
                     ForEach(account.cases.sorted(by: { $0.key.rawValue < $1.key.rawValue }),
                             id: \.key) { csCase, amount in
                         VStack {

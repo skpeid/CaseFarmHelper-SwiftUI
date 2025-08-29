@@ -54,8 +54,6 @@ struct AddTradeView: View {
                 }
             }
             Button {
-                //                guard let sender = sender, let selectedCase = selectedCase, let receiver = receiver else { return }
-                //                viewModel.saveTrade(from: sender, to: receiver, csCase: selectedCase)
                 guard let sender, let receiver, !cases.isEmpty else { return }
                 viewModel.saveTrade(from: sender, to: receiver, cases: cases)
                 dismiss()

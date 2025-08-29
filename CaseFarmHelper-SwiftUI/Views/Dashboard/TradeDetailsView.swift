@@ -52,7 +52,7 @@ struct TradeDetailsView: View {
                 let sortedCases = trade.casesTraded.sorted { $0.value > $1.value }
                 VStack(alignment: .leading) {
                     Text("has received") + Text(" \(trade.totalTraded) cases").fontWeight(.bold) + Text(" from ") + Text(trade.sender.profileName).fontWeight(.bold)
-                    LazyVGrid(columns: Constants.columns) {
+                    LazyVGrid(columns: Constants.caseColumns) {
                         ForEach(Array(sortedCases), id: \.key) { csCase, amount in
                             VStack {
                                 Image(csCase.imageName)
