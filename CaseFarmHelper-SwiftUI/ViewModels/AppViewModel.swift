@@ -42,6 +42,7 @@ final class AppViewModel: ObservableObject {
     
     func addDrop(to account: Account, csCase: CSCase) {
         account.cases[csCase, default: 0] += 1
+        account.lastDropDate = Date()
         operations.append(Drop(account: account, caseDropped: csCase))
     }
     

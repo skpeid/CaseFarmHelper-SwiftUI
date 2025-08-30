@@ -16,6 +16,11 @@ final class Account: Identifiable, ObservableObject, Hashable {
     @Published var username: String
     @Published var cases: [CSCase: Int] = [:]
     @Published var profileImage: UIImage?
+    var gotDropThisWeek: Bool {
+        guard let lastDropDate else { return false }
+        return lastDropDate >= Date.lastResetDate
+    }
+    var lastDropDate: Date?
     
     init(profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil) {
         self.profileName = profileName

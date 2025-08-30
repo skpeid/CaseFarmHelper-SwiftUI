@@ -22,6 +22,7 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                accountsDropStatusGrid
                 List {
                     ForEach(viewModel.operations) { operation in
                         switch operation {
@@ -46,6 +47,11 @@ struct DashboardView: View {
             }
             .navigationTitle("Dashboard")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("week 6 till 9 sep")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         isPresentedAddTrade.toggle()
@@ -77,6 +83,25 @@ struct DashboardView: View {
                     .presentationDetents([.large])
             }
         }
+    }
+    
+    private var accountsDropStatusGrid: some View {
+        let sortedAccounts = viewModel.accounts.sorted {
+            if $0.gotDropThisWeek == $1.gotDropThisWeek {
+                return $0.profileName < $1.profileName
+            }
+            return !$0.gotDropThisWeek && $1.gotDropThisWeek
+        }
+        
+        return LazyVGrid(columns: Constants.accountsProgressColumns) {
+            ForEach(sortedAccounts) { account in
+                VStack {
+                    AccountAvatarView(image: account.profileImage, size: Constants.smallAvatarSize)
+                        .background(account.gotDropThisWeek ? .green.opacity(0.3) : .red)
+                }
+            }
+        }
+        .padding()
     }
 }
 

@@ -31,6 +31,7 @@ struct AddTradeView: View {
                                     .tag(account as Account?)
                             }
                         }
+                        .border(.indigo, width: 2)
                     }
 //                    AccountAvatarView(image: sender?.profileImage, size: Constants.menuAvatarSize)
                 }
@@ -47,6 +48,7 @@ struct AddTradeView: View {
                 }
             }
             .padding()
+            Divider()
             LazyVGrid(columns: Constants.caseColumns) {
                 ForEach(CSCase.allCases) { csCase in
                     VStack {

@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct Constants {
-    static let caseColumns = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    static let caseColumns = Array(repeating: GridItem(.flexible()), count: 3)
     static let accountColumns = Array(repeating: GridItem(.flexible()), count: 5)
+    static let accountsProgressColumns = Array(repeating: GridItem(.flexible()), count: 7)
     
     static let menuAvatarSize: CGFloat = 48
     static let detailsAvatarSize: CGFloat = 82
+    static let smallAvatarSize: CGFloat = 32
     static let dashboardCaseSize: CGFloat = 50
     static let bigCaseSize: CGFloat = 100
     
