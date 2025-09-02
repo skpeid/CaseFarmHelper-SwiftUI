@@ -21,37 +21,41 @@ struct DashboardView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                accountsDropStatusGrid
-                List {
-                    ForEach(viewModel.operations) { operation in
-                        switch operation {
-                        case let drop as Drop:
-                            Button {
-                                selectedDrop = drop
-                            } label: {
-                                DropCellView(drop: drop)
+            Form {
+                Section(header: HStack {
+                    Text("Status")
+                    Spacer()
+                    Text("week 6 till 9 sep")
+                }) {
+                    accountsDropStatusGrid
+                }
+                
+                Section(header: Text("Operations")) {
+                    List {
+                        ForEach(viewModel.operations) { operation in
+                            switch operation {
+                            case let drop as Drop:
+                                Button {
+                                    selectedDrop = drop
+                                } label: {
+                                    DropCellView(drop: drop)
+                                }
+                                
+                            case let trade as Trade:
+                                Button {
+                                    selectedTrade = trade
+                                } label: {
+                                    TradeCellView(trade: trade)
+                                }
+                            default:
+                                Text("Unexpected Error")
                             }
-                            
-                        case let trade as Trade:
-                            Button {
-                                selectedTrade = trade
-                            } label: {
-                                TradeCellView(trade: trade)
-                            }
-                        default:
-                            Text("Unexpected Error")
                         }
                     }
                 }
             }
             .navigationTitle("Dashboard")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Text("week 6 till 9 sep")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         isPresentedAddTrade.toggle()
@@ -95,13 +99,14 @@ struct DashboardView: View {
         
         return LazyVGrid(columns: Constants.accountsProgressColumns) {
             ForEach(sortedAccounts) { account in
-                VStack {
+                VStack() {
                     AccountAvatarView(image: account.profileImage, size: Constants.smallAvatarSize)
-                        .background(account.gotDropThisWeek ? .green.opacity(0.3) : .red)
+                        .padding(8)
+                        .background(account.gotDropThisWeek ? .green.opacity(0.3) : .clear)
                 }
             }
         }
-        .padding()
+//        .padding()
     }
 }
 
