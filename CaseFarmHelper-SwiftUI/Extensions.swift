@@ -23,4 +23,8 @@ extension Date {
         }
         return thisWeek
     }
+    
+    var weekOfYear: Int {
+        Calendar.current.component(.weekOfYear, from: self)
+    }
 }

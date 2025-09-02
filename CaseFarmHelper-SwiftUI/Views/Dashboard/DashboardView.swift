@@ -25,7 +25,7 @@ struct DashboardView: View {
                 Section(header: HStack {
                     Text("Status")
                     Spacer()
-                    Text("week 6 till 9 sep")
+                    weekInfoText
                 }) {
                     accountsDropStatusGrid
                 }
@@ -106,7 +106,30 @@ struct DashboardView: View {
                 }
             }
         }
-//        .padding()
+    }
+    
+    private var weekInfoText: some View {
+        let resetWeekday = 4
+        let resetHour = 6
+        var nextReset: Date {
+            let now = Date()
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
+            components.weekday = resetWeekday
+            components.hour = resetHour
+            components.minute = 0
+            components.second = 0
+            
+            return calendar.nextDate(after: now, matching: components, matchingPolicy: .nextTimePreservingSmallerComponents)!
+        }
+        
+        var nextResetString: String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "d MMM"
+            return formatter.string(from: nextReset)
+        }
+        
+        return Text("Week \(Date().weekOfYear) · till \(nextResetString)").fontWeight(.semibold).foregroundStyle(.black)
     }
 }
 
