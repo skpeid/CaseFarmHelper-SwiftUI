@@ -14,6 +14,7 @@ struct AddTradeView: View {
     @State private var sender: Account?
     @State private var receiver: Account?
     @State private var cases: [CSCase: Int] = [:]
+    @State private var alertMessage: String?
     
     @Environment(\.dismiss) var dismiss
     
@@ -33,7 +34,6 @@ struct AddTradeView: View {
                         }
                         .border(.indigo, width: 2)
                     }
-//                    AccountAvatarView(image: sender?.profileImage, size: Constants.menuAvatarSize)
                 }
                 VStack {
                     Text("To")
@@ -63,52 +63,77 @@ struct AddTradeView: View {
                                 .frame(width: 30)
                         }
                     }
-//                    .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(.black, lineWidth: 1)
                     )
                 }
             }
-//            ForEach(CSCase.allCases) { csCase in
-//                HStack {
-//                    Image(csCase.imageName)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 50)
-//                    Text(csCase.displayName)
-//                    Spacer()
-//                    TextField("0", text: binding(for: csCase))
-//                        .frame(width: 50)
-//                        .keyboardType(.numberPad)
-//                }
-//            }
             Spacer()
             RoundedButton(title: "Save") {
-                guard let sender, let receiver, !cases.isEmpty else { return }
-                viewModel.saveTrade(from: sender, to: receiver, cases: cases)
-                dismiss()
+                saveTrade()
             }
             .navigationTitle("Trade")
             .navigationBarTitleDisplayMode(.inline)
         }
         .padding()
+        .alert("Trade Error", isPresented: Binding(get: {alertMessage != nil }, set: { if !$0 { alertMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage ?? "")
+        }
+        .onChange(of: sender?.id) { _ in limitAllToAvailable() }
     }
     
-    private func binding(for key: CSCase) -> Binding<Int> {
-        Binding(
-            get: { cases[key, default: 0] },
-            set: { cases[key] = $0 }
-            )
+    private func available(for csCase: CSCase) -> Int {
+        sender?.cases[csCase, default: 0] ?? 0
     }
-//    private func binding(for key: CSCase) -> Binding<String> {
-//        Binding<String>(
-//            get: {
-//                String(cases[key] ?? 0)
-//            },
-//            set: { newValue in
-//                cases[key] = Int(newValue) ?? 0
-//            }
-//        )
-//    }
+    
+    private func binding(for csCase: CSCase) -> Binding<Int> {
+        Binding {
+            cases[csCase, default: 0]
+        } set: { newValue in
+            let maxValue = available(for: csCase)
+            cases[csCase] = max(0, min(newValue, maxValue))
+        }
+    }
+    
+    private var canSave: Bool {
+        guard let from = sender, let to = receiver, from.id != to.id else { return false }
+        let filtered = cases.filter { $0.value > 0 }
+        guard !filtered.isEmpty else { return false }
+        
+        for (csCase, amount) in filtered {
+            if amount > available(for: csCase) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    private func limitAllToAvailable() {
+        for csCase in CSCase.allCases {
+            let maxValue = available(for: csCase)
+            if let amount = cases[csCase], amount > maxValue {
+                cases[csCase] = maxValue
+            }
+        }
+    }
+    
+    private func saveTrade() {
+        guard let from = sender, let to = receiver else { return }
+        let filteredCases = cases.filter { $0.value > 0 }
+        if let error = viewModel.validateTrade(from: from, to: to, cases: filteredCases) {
+            alertMessage = error.localizedDescription
+            return
+        }
+        do {
+            try viewModel.performTrade(from: from, to: to, cases: filteredCases)
+            viewModel.operations.append(Trade(sender: from, receiver: to, casesTraded: cases))
+            cases.removeAll()
+            dismiss()
+        } catch {
+            alertMessage = error.localizedDescription
+        }
+    }
 }
