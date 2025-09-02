@@ -21,41 +21,59 @@ struct AddAccountView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .center) {
-                Circle()
-                    .fill(.gray)
-                    .frame(width: 100, height: 100)
-                    .overlay(Text("Select"))
-                    .foregroundStyle(.white)
-                    .shadow(radius: 4)
-                VStack {
-                    Text("Profile Name")
-                    TextField("Profile Name", text: $profileName)
-                        .textFieldStyle(.roundedBorder)
-                        .padding(.bottom)
-                    Text("Username")
-                    TextField("Username", text: $username)
-                        .textFieldStyle(.roundedBorder)
+            Form {
+                Section(header: Text("Account Info")) {
+                    HStack(alignment: .center) {
+                        VStack {
+                            if let image = selectedImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                            } else {
+                                Circle()
+                                    .fill(Color.gray)
+                                    .frame(width: 100, height: 100)
+                                    .overlay(Text("Select"))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .shadow(radius: 4)
+                        
+                        VStack {
+                            Text("Profile Name")
+                            TextField("Profile Name", text: $profileName)
+                                .textFieldStyle(.roundedBorder)
+                                .padding(.bottom)
+                            Text("Username")
+                            TextField("Username", text: $username)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        .padding(.leading)
+                    }
+//                    .padding()
+                    .onTapGesture {
+                        showImagePicker.toggle()
+                    }
                 }
-                .padding(.horizontal)
-            }
-            .padding()
-            .onTapGesture {
-                showImagePicker.toggle()
-            }
-            ForEach(CSCase.allCases) { csCase in
-                HStack {
-                    Image(csCase.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50)
-                    Text(csCase.displayName)
-                    Spacer()
-                    TextField("0", text: binding(for: csCase))
-                        .frame(width: 50)
-                        .keyboardType(.numberPad)
+                
+                Section(header: Text("Initial Cases")) {
+                    ForEach(CSCase.allCases) { csCase in
+                        HStack {
+                            Image(csCase.imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 50)
+                            Text(csCase.displayName)
+                            Spacer()
+                            TextField("0", text: binding(for: csCase))
+                                .frame(width: 50)
+                                .keyboardType(.numberPad)
+                        }
+                    }
                 }
             }
+            
             Spacer()
             RoundedButton(title: "Add Account") {
                 guard let image = selectedImage else { return }
@@ -63,11 +81,11 @@ struct AddAccountView: View {
                 viewModel.addAccount(newAccount)
                 dismiss()
             }
+            .padding([.horizontal, .bottom])
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $selectedImage)
             }
         }
-        .padding()
     }
     
     private func binding(for key: CSCase) -> Binding<String> {
