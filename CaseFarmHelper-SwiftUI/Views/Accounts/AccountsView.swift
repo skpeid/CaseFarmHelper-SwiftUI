@@ -47,8 +47,13 @@ struct AccountCellView: View {
     var body: some View {
         HStack {
             AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
-            Text(account.profileName)
-                .padding()
+            VStack(alignment: .leading) {
+                Text(account.profileName)
+                    .fontWeight(.semibold)
+                Text("@\(account.username)")
+                    .font(.caption2)
+            }
+            .padding(.horizontal)
             Spacer()
             Text("Cases: \(account.getTotalCasesAmount)")
         }

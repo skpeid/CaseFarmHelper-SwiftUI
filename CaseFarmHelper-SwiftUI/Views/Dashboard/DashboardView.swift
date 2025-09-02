@@ -15,6 +15,7 @@ struct DashboardView: View {
     @State private var isPresentedAddTrade: Bool = false
     @State private var isPresentedDropDetails: Bool = false
     @State private var isPresentedTradeDetails: Bool = false
+    @State private var showProfileName: Bool = false
     
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
@@ -99,7 +100,7 @@ struct DashboardView: View {
         
         return LazyVGrid(columns: Constants.accountsProgressColumns) {
             ForEach(sortedAccounts) { account in
-                VStack() {
+                VStack {
                     AccountAvatarView(image: account.profileImage, size: Constants.smallAvatarSize)
                         .padding(8)
                         .background(account.gotDropThisWeek ? .green.opacity(0.3) : .clear)

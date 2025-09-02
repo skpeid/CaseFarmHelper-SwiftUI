@@ -51,7 +51,6 @@ struct AddAccountView: View {
                         }
                         .padding(.leading)
                     }
-//                    .padding()
                     .onTapGesture {
                         showImagePicker.toggle()
                     }
@@ -76,8 +75,8 @@ struct AddAccountView: View {
             
             Spacer()
             RoundedButton(title: "Add Account") {
-                guard let image = selectedImage else { return }
-                let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: image)
+                if profileName.isEmpty || username.isEmpty { return }
+                let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: selectedImage)
                 viewModel.addAccount(newAccount)
                 dismiss()
             }
