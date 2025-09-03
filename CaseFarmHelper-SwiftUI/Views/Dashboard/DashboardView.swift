@@ -110,27 +110,33 @@ struct DashboardView: View {
     }
     
     private var weekInfoText: some View {
-        let resetWeekday = 4
-        let resetHour = 6
-        var nextReset: Date {
-            let now = Date()
-            let calendar = Calendar.current
-            var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
-            components.weekday = resetWeekday
-            components.hour = resetHour
-            components.minute = 0
-            components.second = 0
-            
-            return calendar.nextDate(after: now, matching: components, matchingPolicy: .nextTimePreservingSmallerComponents)!
+        let calendar = Calendar.current
+        let now = Date()
+        
+        var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
+        components.weekday = 4
+        components.hour = 6
+        components.minute = 0
+        components.second = 0
+        
+        guard let  thisWeekReset = calendar.date(from: components) else { return Text("Error computing week") }
+        
+        let weekStart: Date
+        let weekEnd: Date
+        
+        if now < thisWeekReset {
+            weekStart = calendar.date(byAdding: .day, value: -7, to: thisWeekReset)!
+            weekEnd = thisWeekReset
+        } else {
+            weekStart = thisWeekReset
+            weekEnd = calendar.date(byAdding: .day, value: 7, to: thisWeekReset)!
         }
         
-        var nextResetString: String {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "d MMM"
-            return formatter.string(from: nextReset)
-        }
+        let weekOfYear = calendar.component(.weekOfYear, from: weekStart)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM"
         
-        return Text("Week \(Date().weekOfYear) · till \(nextResetString)").fontWeight(.semibold).foregroundStyle(.black)
+        return Text("Week \(weekOfYear) · till \(formatter.string(from: weekEnd))")
     }
 }
 
