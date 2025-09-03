@@ -78,6 +78,7 @@ struct AddAccountView: View {
                 if profileName.isEmpty || username.isEmpty { return }
                 let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: selectedImage)
                 viewModel.addAccount(newAccount)
+                viewModel.saveAccounts()
                 dismiss()
             }
             .padding([.horizontal, .bottom])

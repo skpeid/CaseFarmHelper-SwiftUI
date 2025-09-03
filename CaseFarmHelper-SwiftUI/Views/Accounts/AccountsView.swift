@@ -35,7 +35,17 @@ struct AccountsView: View {
                     Image(systemName: "plus")
                         .fontWeight(.semibold)
                 }
-                
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        PersistenceManager.shared.deleteAccountsFile()
+                        viewModel.accounts.removeAll()
+                    } label: {
+                        Text("Delete all accounts")
+                    }
+
+                }
             }
         }
     }

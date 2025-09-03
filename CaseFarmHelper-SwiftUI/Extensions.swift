@@ -7,6 +7,19 @@
 
 import Foundation
 
+extension Dictionary {
+    func mapKeys<T>(_ transform: (Key) -> T) -> [T: Value] {
+        Dictionary<T, Value>(uniqueKeysWithValues: self.map { (transform($0.key), $0.value) })
+    }
+}
+
+extension FileManager {
+    static var accountsURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("accounts.json")
+    }
+}
+
 extension Date {
     static var lastResetDate: Date {
         let calendar = Calendar.current

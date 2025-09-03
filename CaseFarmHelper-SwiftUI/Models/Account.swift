@@ -7,11 +7,19 @@
 
 import SwiftUI
 
+struct AccountDTO: Codable, Identifiable {
+    let id: UUID
+    var profileName: String
+    var username: String
+    var cases: [String: Int]
+    var profileImage: Data?
+}
+
 final class Account: Identifiable, ObservableObject, Hashable {
     static func == (lhs: Account, rhs: Account) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
     
-    let id = UUID()
+    let id: UUID
     @Published var profileName: String
     @Published var username: String
     @Published var cases: [CSCase: Int] = [:]
@@ -22,7 +30,8 @@ final class Account: Identifiable, ObservableObject, Hashable {
     }
     var lastDropDate: Date?
     
-    init(profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil) {
+    init(id: UUID = UUID(), profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil) {
+        self.id = id
         self.profileName = profileName
         self.username = username
         self.profileImage = profileImage

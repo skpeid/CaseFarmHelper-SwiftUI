@@ -21,33 +21,42 @@ enum TradeError: LocalizedError {
     }
 }
 
+@MainActor
 final class AppViewModel: ObservableObject {
     
     @Published var accounts: [Account] = []
     @Published var operations: [Operation] = []
     
     init() {
-        let dummyAcc1 = Account(profileName: "emptyACC", username: "")
-        let dummyAcc2 = Account(profileName: "jks", username: "syrazavr", cases: [.revolution:40, .kilowatt:13])
-        let dummyAcc3 = Account(profileName: "azino", username: "", cases: [.recoil:1, .fracture:2, .dreamsAndNightmares: 10, .kilowatt: 20, .revolution: 30])
-        let dummyAcc4 = Account(profileName: "MAJORKA", username: "Ohnepixel", cases: [.recoil:100, .fracture:100, .dreamsAndNightmares: 100, .kilowatt: 100, .revolution: 100])
-        accounts = [dummyAcc1, dummyAcc2, dummyAcc3, dummyAcc4,
-                    Account(profileName: "acc1 ", username: ""),
-                    Account(profileName: "2222", username: ""),
-                    Account(profileName: "3333", username: ""),
-                    Account(profileName: "4444", username: ""),
-                    Account(profileName: "555555", username: ""),
-                    Account(profileName: "666", username: ""),
-                    Account(profileName: "777", username: ""),
-                    Account(profileName: "8888", username: "")
-        ]
-        
-        operations = [
-            Drop(account: dummyAcc1, caseDropped: .dreamsAndNightmares),
-            Trade(sender: dummyAcc2, receiver: dummyAcc1, casesTraded: [.recoil: 1]),
-            Drop(account: dummyAcc3, caseDropped: .fracture),
-            Trade(sender: dummyAcc4, receiver: dummyAcc1, casesTraded: [.recoil:100, .fracture:100, .dreamsAndNightmares: 100, .kilowatt: 100, .revolution: 100])
-        ]
+        loadAccounts()
+    }
+    
+    func loadAccounts() {
+        let dtos = PersistenceManager.shared.loadAccounts()
+        accounts = dtos.map { dto in
+            Account(id: dto.id,
+                    profileName: dto.profileName,
+                    username: dto.username,
+                    cases: dto.cases.reduce(into: [:], { dict, pair in
+                if let csCase = CSCase(rawValue: pair.key) {
+                    dict[csCase] = pair.value
+                }
+            }),
+                    profileImage: dto.profileImage.flatMap { UIImage(data: $0) }
+            )
+        }
+    }
+    
+    func saveAccounts() {
+        let dtos = accounts.map { acc in
+            AccountDTO(id: acc.id,
+                       profileName: acc.profileName,
+                       username: acc.username,
+                       cases: acc.cases.mapKeys { $0.rawValue },
+                       profileImage: acc.profileImage?.pngData()
+            )
+        }
+        PersistenceManager.shared.saveAccounts(dtos)
     }
     
     func validateTrade(from: Account?, to: Account?, cases: [CSCase: Int]) -> TradeError? {
