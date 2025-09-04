@@ -123,13 +123,20 @@ struct AddTradeView: View {
     private func saveTrade() {
         guard let from = sender, let to = receiver else { return }
         let filteredCases = cases.filter { $0.value > 0 }
+
         if let error = viewModel.validateTrade(from: from, to: to, cases: filteredCases) {
             alertMessage = error.localizedDescription
             return
         }
+
         do {
             try viewModel.performTrade(from: from, to: to, cases: filteredCases)
-            viewModel.operations.append(Trade(sender: from, receiver: to, casesTraded: cases))
+
+            // ✅ operations is derived → append to trades instead
+            let trade = Trade(sender: from, receiver: to, casesTraded: filteredCases)
+            viewModel.trades.append(trade)
+            viewModel.saveAll()
+            viewModel.saveAccounts()
             cases.removeAll()
             dismiss()
         } catch {

@@ -25,10 +25,30 @@ enum TradeError: LocalizedError {
 final class AppViewModel: ObservableObject {
     
     @Published var accounts: [Account] = []
-    @Published var operations: [Operation] = []
+    var operations: [Operation] {
+        (drops as [Operation] + trades as [Operation])
+            .sorted { $0.date > $1.date } // newest first
+    }
+    
+    @Published var drops: [Drop] = []
+    @Published var trades: [Trade] = []
     
     init() {
         loadAccounts()
+        loadAll(accounts: accounts)
+    }
+    
+    func saveAll() {
+        PersistenceManager.saveDrop(drops.map { $0.toDTO() })
+        PersistenceManager.saveTrades(trades.map { $0.toDTO() })
+    }
+    
+    func loadAll(accounts: [Account]) {
+        let dropDTOs = PersistenceManager.loadDrops()
+        let tradeDTOs = PersistenceManager.loadTrades()
+        
+        self.drops = dropDTOs.compactMap { Drop.fromDTO($0, accounts: accounts) }
+        self.trades = tradeDTOs.compactMap { Trade.fromDTO($0, accounts: accounts) }
     }
     
     func loadAccounts() {
@@ -56,7 +76,7 @@ final class AppViewModel: ObservableObject {
                        profileImage: acc.profileImage?.pngData()
             )
         }
-        PersistenceManager.shared.saveAccounts(dtos)
+        PersistenceManager.shared.saveAccount(dtos)
     }
     
     func validateTrade(from: Account?, to: Account?, cases: [CSCase: Int]) -> TradeError? {
@@ -83,7 +103,11 @@ final class AppViewModel: ObservableObject {
     func addDrop(to account: Account, csCase: CSCase) {
         account.cases[csCase, default: 0] += 1
         account.lastDropDate = Date()
-        operations.append(Drop(account: account, caseDropped: csCase))
+        
+        let newDrop = Drop(account: account, caseDropped: csCase)
+        drops.append(newDrop)
+        saveAccounts()
+        saveAll()
     }
     
     func performTrade(from sender: Account, to receiver: Account, cases: [CSCase: Int]) throws {
@@ -95,5 +119,11 @@ final class AppViewModel: ObservableObject {
             sender.cases[csCase] = have - send
             receiver.cases[csCase] = receiver.cases[csCase, default: 0] + send
         }
+    }
+    
+    func deleteOperations() {
+        drops.removeAll()
+        trades.removeAll()
+        PersistenceManager.shared.deleteOperationsFromStorage()
     }
 }

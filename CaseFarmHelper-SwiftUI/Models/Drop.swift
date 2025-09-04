@@ -7,6 +7,13 @@
 
 import Foundation
 
+struct DropDTO: Codable, Identifiable {
+    let id: UUID
+    let date: Date
+    let accountID: UUID
+    let caseDropped: String
+}
+
 final class Drop: Operation {
     let account: Account
     let caseDropped: CSCase
@@ -14,5 +21,23 @@ final class Drop: Operation {
     init(account: Account, caseDropped: CSCase) {
         self.account = account
         self.caseDropped = caseDropped
+    }
+}
+
+extension Drop {
+    func toDTO() -> DropDTO {
+        DropDTO(
+            id: id,
+            date: date,
+            accountID: account.id,
+            caseDropped: caseDropped.rawValue
+        )
+    }
+    
+    static func fromDTO(_ dto: DropDTO, accounts: [Account]) -> Drop? {
+        guard let account = accounts.first(where: { $0.id == dto.accountID }),
+              let csCase = CSCase(rawValue: dto.caseDropped) else { return nil }
+        let drop = Drop(account: account, caseDropped: csCase)
+        return drop
     }
 }

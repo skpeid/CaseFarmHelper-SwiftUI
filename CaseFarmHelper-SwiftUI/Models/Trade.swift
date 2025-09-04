@@ -7,6 +7,14 @@
 
 import Foundation
 
+struct TradeDTO: Codable, Identifiable {
+    let id: UUID
+    let date: Date
+    let senderID: UUID
+    let receiverID: UUID
+    let casesTraded: [String: Int]
+}
+
 final class Trade: Operation {
     let sender: Account
     let receiver: Account
@@ -26,5 +34,26 @@ extension Trade {
     
     var totalTraded: Int {
         casesTraded.values.reduce(0, +)
+    }
+}
+
+extension Trade {
+    func toDTO() -> TradeDTO {
+        TradeDTO(
+            id: id,
+            date: date,
+            senderID: sender.id,
+            receiverID: receiver.id,
+            casesTraded: casesTraded.mapKeys { $0.rawValue }
+        )
+    }
+    
+    static func fromDTO(_ dto: TradeDTO, accounts: [Account]) -> Trade? {
+        guard let sender = accounts.first(where: { $0.id == dto.senderID }),
+              let receiver = accounts.first(where: { $0.id == dto.receiverID }) else { return nil }
+        
+        let cases = dto.casesTraded.compactMapKeys { CSCase(rawValue: $0) }
+        let trade = Trade(sender: sender, receiver: receiver, casesTraded: cases)
+        return trade
     }
 }

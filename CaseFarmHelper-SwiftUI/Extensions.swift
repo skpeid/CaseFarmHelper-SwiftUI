@@ -9,7 +9,14 @@ import Foundation
 
 extension Dictionary {
     func mapKeys<T>(_ transform: (Key) -> T) -> [T: Value] {
-        Dictionary<T, Value>(uniqueKeysWithValues: self.map { (transform($0.key), $0.value) })
+        Dictionary<T, Value>(uniqueKeysWithValues: map { (transform($0.key), $0.value) })
+    }
+    
+    func compactMapKeys<T>(_ transform: (Key) -> T?) -> [T: Value] {
+        Dictionary<T, Value>(uniqueKeysWithValues: compactMap {
+            guard let newKey = transform($0.key) else { return nil }
+            return (newKey, $0.value)
+        })
     }
 }
 
