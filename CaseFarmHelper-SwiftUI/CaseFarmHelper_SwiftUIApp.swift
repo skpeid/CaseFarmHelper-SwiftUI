@@ -12,7 +12,7 @@ struct CaseFarmHelper_SwiftUIApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .tint(.black)
+                .tint(Color(.label))
         }
     }
 }

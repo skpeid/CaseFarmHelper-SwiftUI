@@ -21,9 +21,9 @@ struct AccountAvatarView: View {
                     .clipShape(Circle())
             } else {
                 Circle()
-                    .fill(Color.gray)
+                    .fill(Color(.systemGray4))
                     .frame(width: size, height: size)
-                    .overlay(Image(systemName: "person"))
+                    .overlay(Image(systemName: "person.fill"))
                     .foregroundStyle(.white)
             }
         }

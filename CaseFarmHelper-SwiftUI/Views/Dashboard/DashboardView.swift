@@ -144,6 +144,8 @@ struct DashboardView: View {
         formatter.dateFormat = "d MMM"
         
         return Text("Week \(weekOfYear) · till \(formatter.string(from: weekEnd))")
+            .foregroundStyle(Color(.label))
+            .fontWeight(.semibold)
     }
 }
 
@@ -155,9 +157,11 @@ struct DropCellView: View {
         HStack {
             AccountAvatarView(image: drop.account.profileImage, size: Constants.menuAvatarSize)
             VStack(alignment: .leading) {
-                Text(drop.account.profileName).fontWeight(.bold)
+                Text(drop.account.profileName)
+                    .foregroundStyle(Color(.label))
+                    .fontWeight(.bold)
                 Text("collected drop")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(Color(.secondaryLabel))
                     .font(.caption)
             }
             Spacer()
@@ -172,7 +176,7 @@ struct DropCellView: View {
                         .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
                     Text(drop.monthDayString)
                         .font(.footnote)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(Color(.secondaryLabel))
                 }
             }
         }
@@ -187,10 +191,12 @@ struct TradeCellView: View {
         HStack {
             AccountAvatarView(image: trade.receiver.profileImage, size: Constants.menuAvatarSize)
             VStack(alignment: .leading) {
-                Text(trade.receiver.profileName).fontWeight(.bold)
+                Text(trade.receiver.profileName)
+                    .foregroundStyle(Color(.label))
+                    .fontWeight(.bold)
                 Text("received trade from ")
-                    .foregroundStyle(.gray)
-                    .font(.caption) + Text(trade.sender.profileName).fontWeight(.semibold).font(.caption)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .font(.caption) + Text(trade.sender.profileName).foregroundStyle(Color(.label)).fontWeight(.semibold).font(.caption)
             }
             Spacer()
             HStack {
@@ -199,11 +205,12 @@ struct TradeCellView: View {
                     .foregroundStyle(Constants.tradeColor)
                 VStack {
                     Text("x\(trade.totalTraded)")
+                        .foregroundStyle(Color(.label))
                         .font(.headline)
                         .frame(height: Constants.dashboardCaseSize)
                     Text(trade.monthDayString)
                         .font(.footnote)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(Color(.secondaryLabel))
                 }
             }
         }

@@ -32,7 +32,7 @@ struct AddAccountView: View {
                                     .clipShape(Circle())
                             } else {
                                 Circle()
-                                    .fill(Color.gray)
+                                    .fill(Color(.systemGray4))
                                     .frame(width: 100, height: 100)
                                     .overlay(Text("Select"))
                                     .foregroundStyle(.white)
