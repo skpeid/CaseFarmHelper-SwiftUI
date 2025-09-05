@@ -91,10 +91,18 @@ struct AddAccountView: View {
     private func binding(for key: CSCase) -> Binding<String> {
         Binding<String>(
             get: {
-                String(cases[key] ?? 0)
+                if let value = cases[key], value > 0 {
+                    return String(value)
+                } else {
+                    return ""
+                }
             },
             set: { newValue in
-                cases[key] = Int(newValue) ?? 0
+                if let intValue = Int(newValue) {
+                    cases[key] = intValue
+                } else {
+                    cases[key] = 0
+                }
             }
         )
     }
