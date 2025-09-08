@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddDropView: View {
-    
     @EnvironmentObject var viewModel: AppViewModel
     
     @State var selectedAccount: Account?

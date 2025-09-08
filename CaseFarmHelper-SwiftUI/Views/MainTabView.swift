@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct MainTabView: View {
-    
     @StateObject private var viewModel = AppViewModel()
+    @State private var selectedTab = 2
     
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             DashboardView()
                 .environmentObject(viewModel)
                 .tabItem {
@@ -28,6 +28,7 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Stats", systemImage: "chart.line.uptrend.xyaxis")
                 }
+                .tag(2)
         }
     }
 }
