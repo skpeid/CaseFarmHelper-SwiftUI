@@ -109,8 +109,9 @@ struct DashboardView: View {
             ForEach(sortedAccounts) { account in
                 VStack {
                     AccountAvatarView(image: account.profileImage, size: Constants.smallAvatarSize)
-                        .padding(8)
-                        .background(account.gotDropThisWeek ? .green.opacity(0.3) : .clear)
+                        .overlay(
+                            Circle().stroke(account.gotDropThisWeek ? .green : .red, lineWidth: 3)
+                        )
                 }
             }
         }

@@ -13,6 +13,7 @@ struct AccountDTO: Codable, Identifiable {
     var username: String
     var cases: [String: Int]
     var profileImage: Data?
+    var lastDropDate: Date?
 }
 
 final class Account: Identifiable, ObservableObject, Hashable {
@@ -30,15 +31,38 @@ final class Account: Identifiable, ObservableObject, Hashable {
     }
     var lastDropDate: Date?
     
-    init(id: UUID = UUID(), profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil) {
+    init(id: UUID = UUID(), profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil, lastDropDate: Date? = nil) {
         self.id = id
         self.profileName = profileName
         self.username = username
         self.profileImage = profileImage
         self.cases = cases
+        self.lastDropDate = lastDropDate
     }
     
     var getTotalCasesAmount: Int {
         cases.values.reduce(0, +)
+    }
+}
+
+extension Account {
+    func toDTO() -> AccountDTO {
+        AccountDTO(id: id,
+                   profileName: profileName,
+                   username: username,
+                   cases: cases.mapKeys { $0.rawValue },
+                   lastDropDate: lastDropDate
+        )
+    }
+    
+    static func fromDTO(_ dto: AccountDTO) -> Account {
+        let account = Account(id: dto.id,
+                              profileName: dto.profileName,
+                              username: dto.username,
+                              cases: dto.cases.compactMapKeys { CSCase(rawValue: $0) },
+                              lastDropDate: dto.lastDropDate
+            )
+//        account.lastDropDate = dto.lastDropDate
+        return account
     }
 }

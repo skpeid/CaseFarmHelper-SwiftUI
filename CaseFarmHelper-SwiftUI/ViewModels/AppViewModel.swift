@@ -62,7 +62,8 @@ final class AppViewModel: ObservableObject {
                     dict[csCase] = pair.value
                 }
             }),
-                    profileImage: dto.profileImage.flatMap { UIImage(data: $0) }
+                    profileImage: dto.profileImage.flatMap { UIImage(data: $0) },
+                    lastDropDate: dto.lastDropDate
             )
         }
     }
@@ -73,7 +74,8 @@ final class AppViewModel: ObservableObject {
                        profileName: acc.profileName,
                        username: acc.username,
                        cases: acc.cases.mapKeys { $0.rawValue },
-                       profileImage: acc.profileImage?.pngData()
+                       profileImage: acc.profileImage?.pngData(),
+                       lastDropDate: acc.lastDropDate
             )
         }
         PersistenceManager.shared.saveAccount(dtos)
