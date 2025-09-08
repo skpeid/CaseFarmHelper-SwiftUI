@@ -128,4 +128,10 @@ final class AppViewModel: ObservableObject {
         trades.removeAll()
         PersistenceManager.shared.deleteOperationsFromStorage()
     }
+    
+    var getTotalCasesAmount: Int {
+        accounts.reduce(0) { partialResult, account in
+            partialResult + account.cases.values.reduce(0, +)
+        }
+    }
 }

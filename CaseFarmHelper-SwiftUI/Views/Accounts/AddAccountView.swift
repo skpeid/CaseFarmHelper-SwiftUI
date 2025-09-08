@@ -38,7 +38,6 @@ struct AddAccountView: View {
                                     .foregroundStyle(.white)
                             }
                         }
-                        .shadow(radius: 4)
                         
                         VStack {
                             Text("Profile Name")

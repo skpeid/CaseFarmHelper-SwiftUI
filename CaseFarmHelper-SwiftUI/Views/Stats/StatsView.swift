@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct StatsView: View {
+    @EnvironmentObject var viewModel: AppViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Spacer()
+            RoundedButton(title: "Get Value") {
+                
+            }
+        }
+        .padding()
     }
 }
 

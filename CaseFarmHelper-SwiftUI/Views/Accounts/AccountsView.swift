@@ -16,9 +16,17 @@ struct AccountsView: View {
     
     var body: some View {
         NavigationStack {
-            List(viewModel.accounts) { account in
-                NavigationLink(value: account) {
-                    AccountCellView(account: account)
+            Form {
+                Section(header: HStack {
+                    Text("\(viewModel.accounts.count) accounts")
+                    Spacer()
+                    Text("\(viewModel.getTotalCasesAmount) total cases")
+                }) {
+                    List(viewModel.accounts) { account in
+                        NavigationLink(value: account) {
+                            AccountCellView(account: account)
+                        }
+                    }
                 }
             }
             .navigationTitle("Accounts")
