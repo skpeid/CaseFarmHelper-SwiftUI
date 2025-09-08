@@ -27,7 +27,6 @@ struct AccountAvatarView: View {
                     .foregroundStyle(.white)
             }
         }
-        .shadow(radius: 4)
     }
 }
 
@@ -40,14 +39,12 @@ struct RoundedButton: View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(.systemBackground))
                 .frame(maxWidth: .infinity)
                 .frame(height: 20)
                 .padding()
-                .background(.black)
+                .background(Color(.label))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(radius: 4)
         }
-        
     }
 }

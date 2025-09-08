@@ -55,7 +55,3 @@ struct DropDetailsView: View {
         .padding()
     }
 }
-
-#Preview {
-    DropDetailsView(drop: Drop(account: Account(profileName: "skpeid", username: "kingofgracious"), caseDropped: .dreamsAndNightmares))
-}

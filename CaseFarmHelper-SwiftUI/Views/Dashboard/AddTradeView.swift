@@ -132,10 +132,9 @@ struct AddTradeView: View {
         do {
             try viewModel.performTrade(from: from, to: to, cases: filteredCases)
 
-            // ✅ operations is derived → append to trades instead
-            let trade = Trade(sender: from, receiver: to, casesTraded: filteredCases)
+            let trade = Trade(sender: from, receiver: to, casesTraded: filteredCases, date: Date())
             viewModel.trades.append(trade)
-            viewModel.saveAll()
+            viewModel.saveOperations()
             viewModel.saveAccounts()
             cases.removeAll()
             dismiss()

@@ -27,7 +27,7 @@ final class AppViewModel: ObservableObject {
     @Published var accounts: [Account] = []
     var operations: [Operation] {
         (drops as [Operation] + trades as [Operation])
-            .sorted { $0.date > $1.date } // newest first
+            .sorted { $0.date > $1.date }
     }
     
     @Published var drops: [Drop] = []
@@ -35,15 +35,15 @@ final class AppViewModel: ObservableObject {
     
     init() {
         loadAccounts()
-        loadAll(accounts: accounts)
+        loadOperations(accounts: accounts)
     }
     
-    func saveAll() {
+    func saveOperations() {
         PersistenceManager.saveDrop(drops.map { $0.toDTO() })
         PersistenceManager.saveTrades(trades.map { $0.toDTO() })
     }
     
-    func loadAll(accounts: [Account]) {
+    func loadOperations(accounts: [Account]) {
         let dropDTOs = PersistenceManager.loadDrops()
         let tradeDTOs = PersistenceManager.loadTrades()
         
@@ -104,10 +104,10 @@ final class AppViewModel: ObservableObject {
         account.cases[csCase, default: 0] += 1
         account.lastDropDate = Date()
         
-        let newDrop = Drop(account: account, caseDropped: csCase)
+        let newDrop = Drop(account: account, caseDropped: csCase, date: Date())
         drops.append(newDrop)
         saveAccounts()
-        saveAll()
+        saveOperations()
     }
     
     func performTrade(from sender: Account, to receiver: Account, cases: [CSCase: Int]) throws {

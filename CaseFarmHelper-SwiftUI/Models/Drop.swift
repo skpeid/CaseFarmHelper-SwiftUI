@@ -18,9 +18,10 @@ final class Drop: Operation {
     let account: Account
     let caseDropped: CSCase
     
-    init(account: Account, caseDropped: CSCase) {
+    init(account: Account, caseDropped: CSCase, id: UUID = UUID(), date: Date) {
         self.account = account
         self.caseDropped = caseDropped
+        super.init(id: id, date: date)
     }
 }
 
@@ -37,7 +38,7 @@ extension Drop {
     static func fromDTO(_ dto: DropDTO, accounts: [Account]) -> Drop? {
         guard let account = accounts.first(where: { $0.id == dto.accountID }),
               let csCase = CSCase(rawValue: dto.caseDropped) else { return nil }
-        let drop = Drop(account: account, caseDropped: csCase)
+        let drop = Drop(account: account, caseDropped: csCase, date: dto.date)
         return drop
     }
 }

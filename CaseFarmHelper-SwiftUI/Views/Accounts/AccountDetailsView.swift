@@ -23,13 +23,13 @@ struct AccountDetailsView: View {
                                 .clipShape(Circle())
                         } else {
                             Circle()
-                                .fill(Color.gray)
+                                .fill(Color(.systemGray4))
                                 .frame(width: 100, height: 100)
-                                .overlay(Image(systemName: "person"))
+                                .overlay(Image(systemName: "person.fill"))
+                                .font(.system(size: 28))
                                 .foregroundStyle(.white)
                         }
                     }
-                    .shadow(radius: 4)
                     .padding(.trailing)
                     
                     VStack(alignment: .leading) {

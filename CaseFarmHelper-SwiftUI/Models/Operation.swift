@@ -8,8 +8,13 @@
 import Foundation
 
 class Operation: Identifiable {
-    let id = UUID()
-    let date = Date()
+    let id: UUID
+    let date: Date
+    
+    init(id: UUID = UUID(), date: Date = Date()) {
+        self.id = id
+        self.date = date
+    }
     
     var fullDateString: String {
         let formatter = DateFormatter()

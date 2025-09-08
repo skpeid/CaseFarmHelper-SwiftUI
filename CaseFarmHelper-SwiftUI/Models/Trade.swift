@@ -20,10 +20,11 @@ final class Trade: Operation {
     let receiver: Account
     let casesTraded: [CSCase: Int]
     
-    init(sender: Account, receiver: Account, casesTraded: [CSCase: Int]) {
+    init(sender: Account, receiver: Account, casesTraded: [CSCase: Int], id: UUID = UUID(), date: Date) {
         self.sender = sender
         self.receiver = receiver
         self.casesTraded = casesTraded
+        super.init(id: id, date: date)
     }
 }
 
@@ -53,7 +54,7 @@ extension Trade {
               let receiver = accounts.first(where: { $0.id == dto.receiverID }) else { return nil }
         
         let cases = dto.casesTraded.compactMapKeys { CSCase(rawValue: $0) }
-        let trade = Trade(sender: sender, receiver: receiver, casesTraded: cases)
+        let trade = Trade(sender: sender, receiver: receiver, casesTraded: cases, date: dto.date)
         return trade
     }
 }

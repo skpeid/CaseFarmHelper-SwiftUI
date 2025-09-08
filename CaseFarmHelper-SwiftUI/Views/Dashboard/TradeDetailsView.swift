@@ -81,7 +81,3 @@ struct TradeDetailsView: View {
         .padding()
     }
 }
-
-#Preview {
-    TradeDetailsView(trade: Trade(sender: Account(profileName: "MAJORKA", username: "Ohnepixel"), receiver: Account(profileName: "emptyACC", username: "hduiahsiu"), casesTraded: [.recoil:101, .fracture:102, .dreamsAndNightmares: 100, .kilowatt: 99, .revolution: 98]))
-}

@@ -19,9 +19,6 @@ struct AddDropView: View {
     var body: some View {
         VStack {
             VStack(alignment: .leading) {
-//                Text("Select Account")
-//                    .font(.headline)
-//                    .padding(.bottom)
                 LazyVGrid(columns: Constants.accountColumns) {
                     ForEach(viewModel.accounts) { account in
                         VStack {
@@ -42,9 +39,6 @@ struct AddDropView: View {
             }
             Divider()
             VStack(alignment: .leading) {
-//                Text("Select Case")
-//                    .font(.headline)
-//                    .padding(.bottom)
                 LazyVGrid(columns: Constants.caseColumns) {
                     ForEach(CSCase.allCases) { csCase in
                         VStack {
