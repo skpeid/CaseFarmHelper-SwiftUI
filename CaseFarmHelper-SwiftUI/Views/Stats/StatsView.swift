@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StatsView: View {
-    @EnvironmentObject var viewModel: AppViewModel
+//    @StateObject private var viewModel = StatsViewModel()
     @State private var isPresentedInventoryValue: Bool = false
     
     var body: some View {

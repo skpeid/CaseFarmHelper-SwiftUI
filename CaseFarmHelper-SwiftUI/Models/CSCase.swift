@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CSCase: String, CaseIterable, Identifiable {
+enum CSCase: String, CaseIterable, Identifiable, Hashable {
     var id: Self { self }
     
     case dreamsAndNightmares
@@ -19,7 +19,7 @@ enum CSCase: String, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .dreamsAndNightmares:
-            return "Dreams and Nigthmares Case"
+            return "Dreams & Nigthmares Case"
         case .recoil:
             return "Recoil Case"
         case .revolution:
@@ -29,6 +29,10 @@ enum CSCase: String, CaseIterable, Identifiable {
         case .kilowatt:
             return "Kilowatt Case"
         }
+    }
+    
+    var marketHashName: String {
+        displayName
     }
     
     var imageName: String { rawValue }
