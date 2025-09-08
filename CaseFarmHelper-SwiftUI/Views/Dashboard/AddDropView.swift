@@ -23,12 +23,15 @@ struct AddDropView: View {
                     ForEach(viewModel.accounts) { account in
                         VStack {
                             AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
+                                .overlay(
+                                    Circle().stroke(selectedAccount?.id == account.id ? .green : .clear, lineWidth: 3)
+                                )
                             Text(account.profileName)
                                 .font(.caption2)
                                 .lineLimit(1)
                         }
                         .padding()
-                        .background(selectedAccount?.id == account.id ? .black.opacity(0.1) : .clear)
+                        .background(selectedAccount?.id == account.id ? Color(.systemGray4) : .clear)
                         .onTapGesture {
                             if account == selectedAccount {
                                 selectedAccount = nil
@@ -52,7 +55,10 @@ struct AddDropView: View {
                                 .lineLimit(2)
                         }
                         .padding()
-                        .background(selectedCase?.id == csCase.id ? .black.opacity(0.1) : .clear)
+                        .overlay(
+                            Rectangle().stroke(selectedCase?.id == csCase.id ? Color.gray : .clear, lineWidth: 1)
+                        )
+                        .background(selectedCase?.id == csCase.id ? Color(.systemGray4) : .clear)
                         .onTapGesture {
                             if csCase == selectedCase {
                                 selectedCase = nil
