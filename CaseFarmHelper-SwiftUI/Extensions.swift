@@ -7,6 +7,35 @@
 
 import Foundation
 
+extension String {
+    func priceToDouble() -> Double? {
+        var s = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        if s.isEmpty { return nil }
+
+        s = s.replacingOccurrences(of: "\u{00A0}", with: "")
+
+        let allowed = CharacterSet(charactersIn: "0123456789.,-")
+        s = String(s.unicodeScalars.filter { allowed.contains($0) })
+
+        guard !s.isEmpty else { return nil }
+
+        if s.contains(",") && s.contains(".") {
+            if let lastDot = s.lastIndex(of: "."), let lastComma = s.lastIndex(of: ",") {
+                if lastDot > lastComma {
+                    s = s.replacingOccurrences(of: ",", with: "")
+                } else {
+                    s = s.replacingOccurrences(of: ".", with: "")
+                    s = s.replacingOccurrences(of: ",", with: ".")
+                }
+            }
+        } else if s.contains(",") {
+            s = s.replacingOccurrences(of: ",", with: ".")
+        }
+
+        return Double(s)
+    }
+}
+
 extension Dictionary {
     func mapKeys<T>(_ transform: (Key) -> T) -> [T: Value] {
         Dictionary<T, Value>(uniqueKeysWithValues: map { (transform($0.key), $0.value) })

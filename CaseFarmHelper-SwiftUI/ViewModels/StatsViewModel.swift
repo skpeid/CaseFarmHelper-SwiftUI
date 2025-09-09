@@ -40,4 +40,22 @@ final class StatsViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    
+    func totalCases(from accounts: [Account]) -> Int {
+        accounts.reduce(0) { $0 + $1.getTotalCasesAmount }
+    }
+    
+    func totalValue(from accounts: [Account]) -> Double {
+        accounts.reduce(0.0) { total, account in
+            total + account.cases.reduce(0.0) { subtotal, pair in
+                let (csCase, count) = pair
+                guard count > 0 else { return subtotal }
+                if let priceStr = casePrices[csCase]?.lowestPrice,
+                   let price = priceStr.priceToDouble() {
+                    return subtotal + price * Double(count)
+                }
+                return subtotal
+            }
+        }
+    }
 }

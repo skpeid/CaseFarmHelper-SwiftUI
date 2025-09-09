@@ -14,7 +14,7 @@ struct CasesTickerView: View {
 
     var body: some View {
         GeometryReader { geo in
-            HStack(spacing: 16) {
+            HStack {
                 content
                 content
             }
@@ -35,17 +35,19 @@ struct CasesTickerView: View {
     private var content: some View {
         HStack {
             ForEach(CSCase.allCases, id: \.self) { cs in
-                HStack {
+                HStack() {
+                    Divider()
                     Image(cs.imageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 40, height: 40)
                     VStack(alignment: .leading) {
                         Text(cs.rawValue).font(.caption2)
-                        Text(prices[cs]?.lowestPrice ?? "...").foregroundColor(.green)
+                        Text(prices[cs]?.lowestPrice ?? "...").foregroundColor(.green).font(.headline)
                     }
+                    Spacer()
                 }
-                .frame(width: 140, height: 60)
+                .frame(width: 150, height: 60)
             }
         }
     }
