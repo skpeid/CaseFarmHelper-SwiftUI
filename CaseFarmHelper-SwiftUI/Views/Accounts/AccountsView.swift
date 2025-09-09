@@ -20,7 +20,7 @@ struct AccountsView: View {
                 Section(header: HStack {
                     Text("\(viewModel.accounts.count) accounts")
                     Spacer()
-                    Text("\(viewModel.getTotalCasesAmount) total cases")
+                    Text("Total cases: \(viewModel.getTotalCasesAmount)")
                 }) {
                     List(viewModel.accounts) { account in
                         NavigationLink(value: account) {
