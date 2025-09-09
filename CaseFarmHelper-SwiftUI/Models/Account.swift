@@ -62,7 +62,6 @@ extension Account {
                               cases: dto.cases.compactMapKeys { CSCase(rawValue: $0) },
                               lastDropDate: dto.lastDropDate
             )
-//        account.lastDropDate = dto.lastDropDate
         return account
     }
 }
