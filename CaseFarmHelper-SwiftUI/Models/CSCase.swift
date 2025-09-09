@@ -32,7 +32,11 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
     }
     
     var marketHashName: String {
-        displayName
+        if self != .dreamsAndNightmares {
+            return displayName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? displayName
+        } else {
+            return "Dreams%20%26%20Nightmares%20Case"
+        }
     }
     
     var imageName: String { rawValue }

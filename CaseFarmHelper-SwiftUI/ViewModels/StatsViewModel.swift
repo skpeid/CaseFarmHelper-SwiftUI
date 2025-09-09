@@ -22,7 +22,7 @@ final class StatsViewModel: ObservableObject {
         
         for csCase in CSCase.allCases {
             do {
-                let price = try await service.fetchPrice(for: csCase.marketHashName)
+                let price = try await service.fetchPrice(for: csCase)
                 casePrices[csCase] = price
             } catch {
                 errorMessage = error.localizedDescription
@@ -34,7 +34,7 @@ final class StatsViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         do {
-            let price = try await service.fetchPrice(for: csCase.marketHashName)
+            let price = try await service.fetchPrice(for: csCase)
             casePrices[csCase] = price
         } catch {
             errorMessage = error.localizedDescription

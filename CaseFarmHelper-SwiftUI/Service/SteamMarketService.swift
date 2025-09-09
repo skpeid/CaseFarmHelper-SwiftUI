@@ -11,9 +11,8 @@ final class SteamMarketService {
     private let appID = 730
     private let currencyID = 37
     
-    func fetchPrice(for csCase: String) async throws -> CasePrice {
-        let encodedName = csCase.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? csCase
-        let url = URL(string: "https://steamcommunity.com/market/priceoverview/?appid=\(appID)&currency=\(currencyID)&market_hash_name=\(encodedName)")
+    func fetchPrice(for csCase: CSCase) async throws -> CasePrice {
+        let url = URL(string: "https://steamcommunity.com/market/priceoverview/?appid=\(appID)&currency=\(currencyID)&market_hash_name=\(csCase.marketHashName)")
         guard let url = url else {
             fatalError("Invalid URL")
         }

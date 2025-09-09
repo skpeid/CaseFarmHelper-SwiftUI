@@ -53,7 +53,7 @@ struct CaseTickerView: View {
                 GeometryReader { proxy in
                     Color.clear.onAppear {
                         totalWidth = proxy.size.width / 2
-                        startScrolling()
+//                        startScrolling()
                     }
                 }
             )
