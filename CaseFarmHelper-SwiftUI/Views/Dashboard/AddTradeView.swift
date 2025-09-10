@@ -32,7 +32,7 @@ struct AddTradeView: View {
                                     .tag(account as Account?)
                             }
                         }
-                        .border(.indigo, width: 2)
+                        .border(Constants.tradeColor, width: 2)
                     }
                 }
                 VStack {
@@ -45,6 +45,7 @@ struct AddTradeView: View {
                                 .tag(account as Account?)
                         }
                     }
+                    .border(Constants.tradeColor, width: 2)
                 }
             }
             .padding()
@@ -58,15 +59,14 @@ struct AddTradeView: View {
                             .frame(width: Constants.bigCaseSize)
                         Text(csCase.displayName)
                             .font(.caption)
+                            .lineLimit(1)
                         Stepper(value: binding(for: csCase), in: 0...99) {
                             Text("\(cases[csCase, default: 0])")
                                 .frame(width: 30)
                         }
+                        .padding(.bottom)
                     }
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(.black, lineWidth: 1)
-                    )
+                    .border(Color(.systemGray4), width: 2)
                 }
             }
             Spacer()

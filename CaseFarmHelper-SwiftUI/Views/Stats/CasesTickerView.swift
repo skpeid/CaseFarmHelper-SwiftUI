@@ -28,26 +28,29 @@ struct CasesTickerView: View {
                 }
             )
         }
-        .frame(height: 60)
+        .frame(height: Constants.tickerHeight)
         .clipped()
     }
 
     private var content: some View {
         HStack {
             ForEach(CSCase.allCases, id: \.self) { cs in
-                HStack() {
-                    Divider()
+                HStack {
                     Image(cs.imageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 40, height: 40)
                     VStack(alignment: .leading) {
-                        Text(cs.rawValue).font(.caption2)
-                        Text(prices[cs]?.lowestPrice ?? "...").foregroundColor(.green).font(.headline)
+                        Text(cs.tickerName)
+                            .foregroundColor(Color(.label))
+                            .font(.headline)
+                        Text(prices[cs]?.lowestPrice ?? "N/A")
+                            .foregroundColor(Color(.label))
+                            .font(.headline)
                     }
                     Spacer()
                 }
-                .frame(width: 150, height: 60)
+                .frame(width: Constants.tickerWidth)
             }
         }
     }

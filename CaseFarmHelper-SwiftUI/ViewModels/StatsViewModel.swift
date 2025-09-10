@@ -41,10 +41,6 @@ final class StatsViewModel: ObservableObject {
         }
     }
     
-    func totalCases(from accounts: [Account]) -> Int {
-        accounts.reduce(0) { $0 + $1.getTotalCasesAmount }
-    }
-    
     func totalValue(from accounts: [Account]) -> Double {
         accounts.reduce(0.0) { total, account in
             total + account.cases.reduce(0.0) { subtotal, pair in

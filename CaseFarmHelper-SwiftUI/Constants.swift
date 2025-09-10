@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct Constants {
+    static let tickerWidth: CGFloat = 160
+    static let tickerHeight: CGFloat = 60
+    
     static let caseColumns = Array(repeating: GridItem(.flexible()), count: 3)
     static let accountColumns = Array(repeating: GridItem(.flexible()), count: 5)
     static let accountsProgressColumns = Array(repeating: GridItem(.flexible()), count: 7)

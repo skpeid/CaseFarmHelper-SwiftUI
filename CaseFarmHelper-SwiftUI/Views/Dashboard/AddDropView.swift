@@ -23,7 +23,8 @@ struct AddDropView: View {
                         VStack {
                             AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
                                 .overlay(
-                                    Circle().stroke(selectedAccount?.id == account.id ? .green : .clear, lineWidth: 3)
+                                    Circle().stroke(selectedAccount?.id == account.id ? .green : .gray,
+                                                    lineWidth: selectedAccount?.id == account.id ? 3 : 1)
                                 )
                             Text(account.profileName)
                                 .font(.caption2)
@@ -40,7 +41,7 @@ struct AddDropView: View {
                 }
             }
             Divider()
-            VStack(alignment: .leading) {
+            ScrollView {
                 LazyVGrid(columns: Constants.caseColumns) {
                     ForEach(CSCase.allCases) { csCase in
                         VStack {
@@ -51,7 +52,7 @@ struct AddDropView: View {
                             Text(csCase.displayName)
                                 .font(.caption2)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2)
+                                .lineLimit(1)
                         }
                         .padding()
                         .overlay(

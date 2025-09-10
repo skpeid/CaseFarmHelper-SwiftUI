@@ -44,17 +44,18 @@ struct AccountsView: View {
                         .fontWeight(.semibold)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        PersistenceManager.shared.deleteAccountsFile()
-                        viewModel.accounts.removeAll()
-                    } label: {
-                        Text("Delete all accounts")
-                    }
-
-                }
-            }
+            //TODO: - Deleting accounts.json
+//            .toolbar {
+//                ToolbarItem(placement: .topBarLeading) {
+//                    Button {
+//                        PersistenceManager.shared.deleteAccountsFile()
+//                        viewModel.accounts.removeAll()
+//                    } label: {
+//                        Text("Delete all accounts")
+//                    }
+//
+//                }
+//            }
         }
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @StateObject private var viewModel = AppViewModel()
-    @State private var selectedTab = 2
+    @State private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -18,11 +18,13 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Dashboard", systemImage: "list.dash")
                 }
+                .tag(0)
             AccountsView()
                 .environmentObject(viewModel)
                 .tabItem {
                     Label("Accounts", systemImage: "person.3")
                 }
+                .tag(1)
             StatsView()
                 .environmentObject(viewModel)
                 .tabItem {

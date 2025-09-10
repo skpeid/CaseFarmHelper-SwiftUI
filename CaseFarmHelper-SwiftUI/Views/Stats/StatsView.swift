@@ -16,20 +16,27 @@ struct StatsView: View {
         NavigationStack {
             VStack {
                 CasesTickerView(prices: statsVM.casePrices)
-                VStack {
-                    Text("Total Cases: \(statsVM.totalCases(from: appVM.accounts))")
-
-                                Text("Total Value: \(statsVM.totalValue(from: appVM.accounts), specifier: "%.2f")")
-                }
                 Spacer()
-                RoundedButton(title: "Get Value") {
-                    isPresentedInventoryValue.toggle()
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Inventory Value:")
+                    HStack {
+                        Spacer()
+                        Text("\(statsVM.totalValue(from: appVM.accounts), specifier: "%.2f")₸")
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.green)
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        Text("from \(appVM.getTotalCasesAmount) cases")
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-//                .padding(.bottom)
-                //                .navigationDestination(isPresented: $isPresentedInventoryValue) {
-                //                    InventoryValueView()
-                //                }
+                Spacer()
+                Text("Full statistics is being developed")
+                    .font(.footnote)
+                    .padding()
             }
         }
         .onAppear {
