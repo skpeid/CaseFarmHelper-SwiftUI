@@ -50,23 +50,25 @@ struct AddTradeView: View {
             }
             .padding()
             Divider()
-            LazyVGrid(columns: Constants.caseColumns) {
-                ForEach(CSCase.allCases) { csCase in
-                    VStack {
-                        Image(csCase.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Constants.bigCaseSize)
-                        Text(csCase.displayName)
-                            .font(.caption)
-                            .lineLimit(1)
-                        Stepper(value: binding(for: csCase), in: 0...99) {
-                            Text("\(cases[csCase, default: 0])")
-                                .frame(width: 30)
+            ScrollView {
+                LazyVGrid(columns: Constants.caseColumns) {
+                    ForEach(CSCase.activeDrop) { csCase in
+                        VStack {
+                            Image(csCase.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.bigCaseSize)
+                            Text(csCase.displayName)
+                                .font(.caption)
+                                .lineLimit(1)
+                            Stepper(value: binding(for: csCase), in: 0...99) {
+                                Text("\(cases[csCase, default: 0])")
+                                    .frame(width: 30)
+                            }
+                            .padding(.bottom)
                         }
-                        .padding(.bottom)
+                        .border(Color(.systemGray4), width: 2)
                     }
-                    .border(Color(.systemGray4), width: 2)
                 }
             }
             Spacer()

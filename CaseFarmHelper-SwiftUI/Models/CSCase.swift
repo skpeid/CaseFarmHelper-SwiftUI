@@ -15,12 +15,16 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
     case revolution
     case fracture
     case kilowatt
-    //    case bravo
-    //    case breakout
-    //    case brokenFang
-    //    case chroma
-    //    case chroma2
-    //    case chroma3
+    
+    case bravo
+    case breakout
+    case brokenFang
+    case chroma
+    case chroma2
+    case chroma3
+    
+    static let activeDrop: [CSCase] = [.dreamsAndNightmares, .recoil, .revolution, .fracture, .kilowatt]
+    static let rareDrop: [CSCase] = [.bravo, .breakout, .brokenFang, .chroma, .chroma2, .chroma3]
     
     var displayName: String {
         switch self {
@@ -34,18 +38,18 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
             return "Fracture Case"
         case .kilowatt:
             return "Kilowatt Case"
-            //        case .bravo:
-            //            return "Operation Bravo Case"
-            //        case .breakout:
-            //            return "Operation Breakout Weapon Case"
-            //        case .brokenFang:
-            //            return "Operation Broken Fang Case"
-            //        case .chroma:
-            //            return "Chroma Case"
-            //        case .chroma2:
-            //            return "Chroma 2 Case"
-            //        case .chroma3:
-            //            return "Chroma 3 Case"
+        case .bravo:
+            return "Operation Bravo Case"
+        case .breakout:
+            return "Operation Breakout Weapon Case"
+        case .brokenFang:
+            return "Operation Broken Fang Case"
+        case .chroma:
+            return "Chroma Case"
+        case .chroma2:
+            return "Chroma 2 Case"
+        case .chroma3:
+            return "Chroma 3 Case"
         }
     }
     
@@ -61,6 +65,18 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
             return "FRAC"
         case .kilowatt:
             return "KWATT"
+        case .bravo:
+            return "BRAV"
+        case .breakout:
+            return "BRKUT"
+        case .brokenFang:
+            return "BR-FG"
+        case .chroma:
+            return "CHR-1"
+        case .chroma2:
+            return "CHR-2"
+        case .chroma3:
+            return "CHR-3"
         }
     }
     

@@ -34,7 +34,7 @@ struct CasesTickerView: View {
 
     private var content: some View {
         HStack {
-            ForEach(CSCase.allCases, id: \.self) { cs in
+            ForEach(CSCase.activeDrop, id: \.self) { cs in
                 HStack {
                     Image(cs.imageName)
                         .resizable()
