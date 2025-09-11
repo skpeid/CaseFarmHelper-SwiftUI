@@ -19,7 +19,11 @@ struct StatsView: View {
             VStack {
                 CasesTickerView(prices: statsVM.casePrices)
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Inventory Value:")
+                    HStack {
+                        Text("Inventory Value")
+                        Spacer()
+                        Text("from \(appVM.getTotalCasesAmount) cases")
+                    }
                     HStack {
                         Spacer()
                         Text("\(statsVM.totalValue(from: appVM.accounts), specifier: "%.2f")₸")
@@ -27,13 +31,10 @@ struct StatsView: View {
                             .foregroundStyle(.green)
                         Spacer()
                     }
-                    HStack {
-                        Spacer()
-                        Text("from \(appVM.getTotalCasesAmount) cases")
-                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, 50)
                 VStack {
                     HStack {
                         InfoCircleView(title: "Inventory", value: "\(appVM.getTotalCasesAmount)")
@@ -61,13 +62,10 @@ struct StatsView: View {
             }
         }
         .sheet(isPresented: $isPresentedInventoryView) {
-            InventoryView()
+            InventoryView(viewModel: appVM)
         }
         .sheet(isPresented: $isPresentedDropsHistoryView) {
             DropsHistoryView(drops: appVM.drops)
         }
     }
-}
-#Preview {
-    StatsView()
 }

@@ -33,29 +33,32 @@ struct DropsHistoryView: View {
     }
     
     var body: some View {
-        List {
-            ForEach(groupedByWeek, id: \.group) { group in
-                Section("Week \(group.group.week), \(group.group.year.description)") {
-                    let reversed = group.drops.reversed()
-                    ForEach(reversed) { drop in
-                        HStack {
-                            Image(drop.caseDropped.imageName)
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                            VStack(alignment: .leading) {
-                                Text(drop.account.profileName)
-                                Text(drop.caseDropped.displayName)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+        VStack {
+            ModalSheetHeaderView(title: "Drops History")
+                .padding()
+            List {
+                ForEach(groupedByWeek, id: \.group) { group in
+                    Section("Week \(group.group.week), \(group.group.year.description)") {
+                        let reversed = group.drops.reversed()
+                        ForEach(reversed) { drop in
+                            HStack {
+                                Image(drop.caseDropped.imageName)
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                VStack(alignment: .leading) {
+                                    Text(drop.account.profileName)
+                                    Text(drop.caseDropped.displayName)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text(drop.fullDateString)
+                                    .font(.caption2)
                             }
-                            Spacer()
-                            Text(drop.fullDateString)
-                                .font(.caption2)
                         }
                     }
                 }
             }
         }
-        .navigationTitle("Drops History")
     }
 }

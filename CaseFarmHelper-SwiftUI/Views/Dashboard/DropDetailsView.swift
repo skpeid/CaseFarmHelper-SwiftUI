@@ -9,22 +9,10 @@ import SwiftUI
 
 struct DropDetailsView: View {
     let drop: Drop
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("Drop")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "multiply")
-                        .font(.system(size: 24))
-                }
-            }
+            ModalSheetHeaderView(title: "Drop")
             HStack {
                 AccountAvatarView(image: drop.account.profileImage, size: Constants.detailsAvatarSize)
                 VStack(alignment: .leading) {

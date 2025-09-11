@@ -9,22 +9,10 @@ import SwiftUI
 
 struct TradeDetailsView: View {
     let trade: Trade
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("Trade")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "multiply")
-                        .font(.system(size: 24))
-                }
-            }
+            ModalSheetHeaderView(title: "Trade")
             HStack {
                 AccountAvatarView(image: trade.receiver.profileImage, size: Constants.detailsAvatarSize)
                 VStack(alignment: .leading) {
