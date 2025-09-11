@@ -10,12 +10,14 @@ import Foundation
 enum CSCase: String, CaseIterable, Identifiable, Hashable {
     var id: Self { self }
     
+    // Active drop cases
     case dreamsAndNightmares
     case recoil
     case revolution
     case fracture
     case kilowatt
     
+    // Rare drop cases
     case bravo
     case breakout
     case brokenFang

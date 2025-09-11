@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DropDetailsView: View {
     let drop: Drop
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -18,7 +19,7 @@ struct DropDetailsView: View {
                     .fontWeight(.bold)
                 Spacer()
                 Button {
-                    
+                    dismiss()
                 } label: {
                     Image(systemName: "multiply")
                         .font(.system(size: 24))

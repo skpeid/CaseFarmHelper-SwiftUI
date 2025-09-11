@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TradeDetailsView: View {
     let trade: Trade
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -18,7 +19,7 @@ struct TradeDetailsView: View {
                     .fontWeight(.bold)
                 Spacer()
                 Button {
-                    
+                    dismiss()
                 } label: {
                     Image(systemName: "multiply")
                         .font(.system(size: 24))

@@ -11,12 +11,13 @@ struct StatsView: View {
     @EnvironmentObject private var appVM: AppViewModel
     @StateObject private var statsVM = StatsViewModel()
     @State private var isPresentedInventoryValue: Bool = false
+    @State private var isPresentedDropsHistoryView: Bool = false
+    @State private var isPresentedInventoryView: Bool = false
     
     var body: some View {
         NavigationStack {
             VStack {
                 CasesTickerView(prices: statsVM.casePrices)
-                Spacer()
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Inventory Value:")
                     HStack {
@@ -33,6 +34,21 @@ struct StatsView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
+                VStack {
+                    HStack {
+                        InfoCircleView(title: "Inventory", value: "\(appVM.getTotalCasesAmount)")
+                            .padding(.trailing, 30)
+                            .onTapGesture {
+                                isPresentedInventoryView.toggle()
+                            }
+                        InfoCircleView(title: "Drops", value: "\(appVM.drops.count)")
+                            .onTapGesture {
+                                isPresentedDropsHistoryView.toggle()
+                            }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding()
                 Spacer()
                 Text("Full statistics is being developed")
                     .font(.footnote)
@@ -43,6 +59,12 @@ struct StatsView: View {
             Task {
                 await statsVM.fetchAllCases()
             }
+        }
+        .sheet(isPresented: $isPresentedInventoryView) {
+            InventoryView()
+        }
+        .sheet(isPresented: $isPresentedDropsHistoryView) {
+            DropsHistoryView(drops: appVM.drops)
         }
     }
 }

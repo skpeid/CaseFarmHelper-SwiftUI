@@ -20,13 +20,27 @@ struct AddTradeView: View {
     
     var body: some View {
         VStack {
-            HStack {
+            ScrollView {
                 HStack {
+                    HStack {
+                        VStack {
+                            Text("From")
+                                .font(.headline)
+                            Picker("", selection: $sender) {
+                                Text("Select Sender").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                                ForEach(viewModel.accounts) { account in
+                                    Text(account.profileName)
+                                        .tag(account as Account?)
+                                }
+                            }
+                            .border(Constants.tradeColor, width: 2)
+                        }
+                    }
                     VStack {
-                        Text("From")
+                        Text("To")
                             .font(.headline)
-                        Picker("", selection: $sender) {
-                            Text("Select Sender").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                        Picker("", selection: $receiver) {
+                            Text("Select Receiver").foregroundStyle(.gray).tag(Optional<Account>(nil))
                             ForEach(viewModel.accounts) { account in
                                 Text(account.profileName)
                                     .tag(account as Account?)
@@ -35,48 +49,37 @@ struct AddTradeView: View {
                         .border(Constants.tradeColor, width: 2)
                     }
                 }
+                .padding()
+                Divider()
                 VStack {
-                    Text("To")
-                        .font(.headline)
-                    Picker("", selection: $receiver) {
-                        Text("Select Receiver").foregroundStyle(.gray).tag(Optional<Account>(nil))
-                        ForEach(viewModel.accounts) { account in
-                            Text(account.profileName)
-                                .tag(account as Account?)
-                        }
-                    }
-                    .border(Constants.tradeColor, width: 2)
-                }
-            }
-            .padding()
-            Divider()
-            ScrollView {
-                LazyVGrid(columns: Constants.caseColumns) {
-                    ForEach(CSCase.activeDrop) { csCase in
-                        VStack {
-                            Image(csCase.imageName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.bigCaseSize)
-                            Text(csCase.displayName)
-                                .font(.caption)
-                                .lineLimit(1)
-                            Stepper(value: binding(for: csCase), in: 0...99) {
-                                Text("\(cases[csCase, default: 0])")
-                                    .frame(width: 30)
+                    LazyVGrid(columns: Constants.caseColumns) {
+                        ForEach(CSCase.allCases) { csCase in
+                            VStack {
+                                Image(csCase.imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: Constants.bigCaseSize)
+                                Text(csCase.displayName)
+                                    .font(.caption)
+                                    .lineLimit(1)
+                                Stepper(value: binding(for: csCase), in: 0...99) {
+                                    Text("\(cases[csCase, default: 0])")
+                                        .frame(width: 30)
+                                }
+                                .padding(.bottom)
                             }
-                            .padding(.bottom)
+                            .border(Color(.systemGray4), width: 2)
                         }
-                        .border(Color(.systemGray4), width: 2)
                     }
                 }
+                
             }
+            .navigationTitle("Trade")
+            .navigationBarTitleDisplayMode(.inline)
             Spacer()
             RoundedButton(title: "Save") {
                 saveTrade()
             }
-            .navigationTitle("Trade")
-            .navigationBarTitleDisplayMode(.inline)
         }
         .padding()
         .alert("Trade Error", isPresented: Binding(get: {alertMessage != nil }, set: { if !$0 { alertMessage = nil } })) {
@@ -125,15 +128,15 @@ struct AddTradeView: View {
     private func saveTrade() {
         guard let from = sender, let to = receiver else { return }
         let filteredCases = cases.filter { $0.value > 0 }
-
+        
         if let error = viewModel.validateTrade(from: from, to: to, cases: filteredCases) {
             alertMessage = error.localizedDescription
             return
         }
-
+        
         do {
             try viewModel.performTrade(from: from, to: to, cases: filteredCases)
-
+            
             let trade = Trade(sender: from, receiver: to, casesTraded: filteredCases, date: Date())
             viewModel.trades.append(trade)
             viewModel.saveOperations()
