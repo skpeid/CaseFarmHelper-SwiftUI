@@ -7,11 +7,19 @@
 
 import SwiftUI
 
+enum DropType: String, CaseIterable, Identifiable {
+    case activeDrop = "Active Drop"
+    case rareDrop = "Rare"
+    
+    var id: String { rawValue }
+}
+
 struct AddDropView: View {
     @EnvironmentObject var viewModel: AppViewModel
     
-    @State var selectedAccount: Account?
-    @State var selectedCase: CSCase?
+    @State private var selectedAccount: Account?
+    @State private var selectedCase: CSCase?
+    @State private var dropType: DropType = .activeDrop
     
     @Environment(\.dismiss) var dismiss
     
@@ -42,9 +50,18 @@ struct AddDropView: View {
                     }
                 }
                 Divider()
+                Picker("Drop Type", selection: $dropType) {
+                    ForEach(DropType.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                
                 VStack {
                     LazyVGrid(columns: Constants.caseColumns) {
-                        ForEach(CSCase.allCases) { csCase in
+                        let cases = dropType == .activeDrop ? CSCase.activeDrop : CSCase.rareDrop
+                        ForEach(cases) { csCase in
                             VStack {
                                 Image(csCase.imageName)
                                     .resizable()
