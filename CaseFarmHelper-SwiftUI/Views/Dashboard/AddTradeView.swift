@@ -11,10 +11,17 @@ struct AddTradeView: View {
     
     @EnvironmentObject var viewModel: AppViewModel
     
-    @State private var sender: Account?
-    @State private var receiver: Account?
+    @State private var senderID: UUID?
+    @State private var receiverID: UUID?
     @State private var cases: [CSCase: Int] = [:]
     @State private var alertMessage: String?
+    
+    private var sender: Account? {
+        viewModel.accounts.first { $0.id == senderID }
+    }
+    private var receiver: Account? {
+        viewModel.accounts.first { $0.id == receiverID }
+    }
     
     @Environment(\.dismiss) var dismiss
     
@@ -26,11 +33,11 @@ struct AddTradeView: View {
                         VStack {
                             Text("From")
                                 .font(.headline)
-                            Picker("", selection: $sender) {
-                                Text("Select Sender").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                            Picker("", selection: $senderID) {
+                                Text("Select Sender").foregroundStyle(.gray).tag(UUID?.none)
                                 ForEach(viewModel.accounts) { account in
                                     Text(account.profileName)
-                                        .tag(account as Account?)
+                                        .tag(Optional(account.id))
                                 }
                             }
                             .border(Constants.tradeColor, width: 2)
@@ -39,11 +46,11 @@ struct AddTradeView: View {
                     VStack {
                         Text("To")
                             .font(.headline)
-                        Picker("", selection: $receiver) {
-                            Text("Select Receiver").foregroundStyle(.gray).tag(Optional<Account>(nil))
+                        Picker("", selection: $receiverID) {
+                            Text("Select Receiver").foregroundStyle(.gray).tag(UUID?.none)
                             ForEach(viewModel.accounts) { account in
                                 Text(account.profileName)
-                                    .tag(account as Account?)
+                                    .tag(Optional(account.id))
                             }
                         }
                         .border(Constants.tradeColor, width: 2)
@@ -51,9 +58,9 @@ struct AddTradeView: View {
                 }
                 .padding()
                 Divider()
-                VStack {
+                if let sender = sender {
                     LazyVGrid(columns: Constants.caseColumns) {
-                        ForEach(CSCase.allCases) { csCase in
+                        ForEach(Array(sender.cases.keys)) { csCase in
                             VStack {
                                 Image(csCase.imageName)
                                     .resizable()
@@ -68,17 +75,30 @@ struct AddTradeView: View {
                                 }
                                 .padding(.bottom)
                             }
-                            .border(Color(.systemGray4), width: 2)
+                            .padding()
                         }
                     }
                 }
-                
             }
             .navigationTitle("Trade")
             .navigationBarTitleDisplayMode(.inline)
             Spacer()
+            if let sender = sender {
+                Button("Select All Cases (\(sender.getTotalCasesAmount))") {
+                    selectAllCases(for: sender)
+                }
+                .padding(.vertical)
+            }
             RoundedButton(title: "Save") {
                 saveTrade()
+            }
+        }
+        .onChange(of: senderID) { newValue in
+            cases.removeAll()
+            if let newSender = viewModel.accounts.first(where: { $0.id == newValue }) {
+                for (csCase, _) in newSender.cases {
+                    cases[csCase] = 0
+                }
             }
         }
         .padding()
@@ -87,64 +107,31 @@ struct AddTradeView: View {
         } message: {
             Text(alertMessage ?? "")
         }
-        .onChange(of: sender?.id) { _ in limitAllToAvailable() }
-    }
-    
-    private func available(for csCase: CSCase) -> Int {
-        sender?.cases[csCase, default: 0] ?? 0
     }
     
     private func binding(for csCase: CSCase) -> Binding<Int> {
         Binding {
             cases[csCase, default: 0]
         } set: { newValue in
-            let maxValue = available(for: csCase)
+            let maxValue = sender?.cases[csCase] ?? 0
             cases[csCase] = max(0, min(newValue, maxValue))
         }
     }
     
-    private var canSave: Bool {
-        guard let from = sender, let to = receiver, from.id != to.id else { return false }
-        let filtered = cases.filter { $0.value > 0 }
-        guard !filtered.isEmpty else { return false }
-        
-        for (csCase, amount) in filtered {
-            if amount > available(for: csCase) {
-                return false
-            }
-        }
-        return true
-    }
-    
-    private func limitAllToAvailable() {
-        for csCase in CSCase.allCases {
-            let maxValue = available(for: csCase)
-            if let amount = cases[csCase], amount > maxValue {
-                cases[csCase] = maxValue
-            }
+    private func selectAllCases(for sender: Account) {
+        for (csCase, amount) in sender.cases {
+            cases[csCase] = amount
         }
     }
     
     private func saveTrade() {
-        guard let from = sender, let to = receiver else { return }
-        let filteredCases = cases.filter { $0.value > 0 }
-        
-        if let error = viewModel.validateTrade(from: from, to: to, cases: filteredCases) {
-            alertMessage = error.localizedDescription
-            return
-        }
-        
         do {
-            try viewModel.performTrade(from: from, to: to, cases: filteredCases)
-            
-            let trade = Trade(sender: from, receiver: to, casesTraded: filteredCases, date: Date())
-            viewModel.trades.append(trade)
-            viewModel.saveOperations()
-            viewModel.saveAccounts()
-            cases.removeAll()
+            let (from, to, filtered) = try viewModel.validateTrade(sender: sender, receiver: receiver, cases: cases)
+            try viewModel.performTrade(from: from, to: to, cases: filtered)
             dismiss()
         } catch {
             alertMessage = error.localizedDescription
         }
     }
+    
 }

@@ -10,13 +10,11 @@ import SwiftUI
 enum TradeError: LocalizedError {
     case sameAccounts
     case emptySelection
-    case notEnoughCases(csCase: CSCase, have: Int, want: Int)
     
     var errorDescription: String? {
         switch self {
-        case .sameAccounts: return "Can't send to yourself"
+        case .sameAccounts: return "Select sender and receiver accounts"
         case .emptySelection: return "Choose at least 1 case"
-        case let .notEnoughCases(csCase, have, want): return "\(csCase.displayName): have \(have), want \(want)"
         }
     }
 }
@@ -81,23 +79,6 @@ final class AppViewModel: ObservableObject {
         PersistenceManager.shared.saveAccount(dtos)
     }
     
-    func validateTrade(from: Account?, to: Account?, cases: [CSCase: Int]) -> TradeError? {
-        guard let from, let to else { return .emptySelection }
-        guard from.id != to.id else { return .sameAccounts }
-        
-        let filtered = cases.filter { $0.value > 0 }
-        guard !filtered.isEmpty else { return .emptySelection }
-        
-        for (csCase, amount) in filtered {
-            let have = from.cases[csCase, default: 0]
-            if amount > have {
-                return .notEnoughCases(csCase: csCase, have: have, want: amount)
-            }
-        }
-        
-        return nil
-    }
-    
     func addAccount(_ account: Account) {
         accounts.append(account)
     }
@@ -112,8 +93,19 @@ final class AppViewModel: ObservableObject {
         saveOperations()
     }
     
+    func validateTrade(sender: Account?, receiver: Account?, cases: [CSCase: Int]) throws -> (Account, Account, [CSCase: Int]) {
+        guard let from = sender, let to = receiver, from != to else {
+            throw TradeError.sameAccounts
+        }
+        let filtered = cases.filter { $0.value > 0 }
+        guard !filtered.isEmpty else {
+            throw TradeError.emptySelection
+        }
+        return (from, to, filtered)
+    }
+    
     func performTrade(from sender: Account, to receiver: Account, cases: [CSCase: Int]) throws {
-        if let error = validateTrade(from: sender, to: receiver, cases: cases) { throw error }
+        guard sender.id != receiver.id else { throw TradeError.sameAccounts }
         
         for (csCase, amount) in cases where amount > 0 {
             let have = sender.cases[csCase, default: 0]
@@ -121,6 +113,11 @@ final class AppViewModel: ObservableObject {
             sender.cases[csCase] = have - send
             receiver.cases[csCase] = receiver.cases[csCase, default: 0] + send
         }
+        
+        let newTrade = Trade(sender: sender, receiver: receiver, casesTraded: cases, date: Date())
+        trades.append(newTrade)
+        saveAccounts()
+        saveOperations()
     }
     
     func deleteOperations() {
