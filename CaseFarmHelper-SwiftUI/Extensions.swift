@@ -5,7 +5,20 @@
 //  Created by Kuanysh Auyelgazy on 29.08.2025.
 //
 
-import Foundation
+import SwiftUI
+
+extension Color {
+    static func chartColor(for caseName: CSCase) -> Color {
+        switch caseName {
+        case .dreamsAndNightmares: return .pink
+        case .fracture: return .purple
+        case .recoil: return .yellow
+        case .revolution: return .brown
+        case .kilowatt: return .orange
+        default: return .gray
+        }
+    }
+}
 
 extension String {
     func priceToDouble() -> Double? {

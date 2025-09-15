@@ -5,7 +5,7 @@
 //  Created by Kuanysh Auyelgazy on 21.08.2025.
 //
 
-import Foundation
+import SwiftUI
 
 enum CSCase: String, CaseIterable, Identifiable, Hashable {
     var id: Self { self }
