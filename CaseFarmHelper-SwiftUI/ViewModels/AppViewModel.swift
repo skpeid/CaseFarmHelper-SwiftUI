@@ -21,68 +21,77 @@ enum TradeError: LocalizedError {
 
 @MainActor
 final class AppViewModel: ObservableObject {
-    
     @Published var accounts: [Account] = []
-    var operations: [Operation] {
-        (drops as [Operation] + trades as [Operation])
-            .sorted { $0.date > $1.date }
-    }
-    
     @Published var drops: [Drop] = []
     @Published var trades: [Trade] = []
-    
+
+    var operations: [Operation] {
+        (drops as [Operation] + trades as [Operation]).sorted { $0.date > $1.date }
+    }
+
     init() {
         loadAccounts()
-        loadOperations(accounts: accounts)
+        loadOperations()
     }
-    
-    func saveOperations() {
-        PersistenceManager.saveDrop(drops.map { $0.toDTO() })
-        PersistenceManager.saveTrades(trades.map { $0.toDTO() })
+
+    // MARK: - Accounts persistence
+    func saveAccounts() {
+        let dtos = accounts.map { acc in
+            AccountDTO(
+                id: acc.id,
+                profileName: acc.profileName,
+                username: acc.username,
+                cases: Dictionary(uniqueKeysWithValues: acc.cases.map { ($0.key.rawValue, $0.value) }),
+                profileImage: acc.profileImage?.pngData(),
+                lastDropDate: acc.lastDropDate
+            )
+        }
+        PersistenceManager.shared.saveAccounts(dtos)
     }
-    
-    func loadOperations(accounts: [Account]) {
-        let dropDTOs = PersistenceManager.loadDrops()
-        let tradeDTOs = PersistenceManager.loadTrades()
-        
-        self.drops = dropDTOs.compactMap { Drop.fromDTO($0, accounts: accounts) }
-        self.trades = tradeDTOs.compactMap { Trade.fromDTO($0, accounts: accounts) }
-    }
-    
+
     func loadAccounts() {
         let dtos = PersistenceManager.shared.loadAccounts()
         accounts = dtos.map { dto in
-            Account(id: dto.id,
-                    profileName: dto.profileName,
-                    username: dto.username,
-                    cases: dto.cases.reduce(into: [:], { dict, pair in
-                if let csCase = CSCase(rawValue: pair.key) {
-                    dict[csCase] = pair.value
-                }
-            }),
-                    profileImage: dto.profileImage.flatMap { UIImage(data: $0) },
-                    lastDropDate: dto.lastDropDate
+            Account(
+                id: dto.id,
+                profileName: dto.profileName,
+                username: dto.username,
+                cases: dto.cases.reduce(into: [:]) { dict, pair in
+                    if let cs = CSCase(rawValue: pair.key) {
+                        dict[cs] = pair.value
+                    }
+                },
+                profileImage: dto.profileImage.flatMap { UIImage(data: $0) },
+                lastDropDate: dto.lastDropDate
             )
         }
     }
-    
-    func saveAccounts() {
-        let dtos = accounts.map { acc in
-            AccountDTO(id: acc.id,
-                       profileName: acc.profileName,
-                       username: acc.username,
-                       cases: acc.cases.mapKeys { $0.rawValue },
-                       profileImage: acc.profileImage?.pngData(),
-                       lastDropDate: acc.lastDropDate
-            )
-        }
-        PersistenceManager.shared.saveAccount(dtos)
+
+    // MARK: - Operations persistence
+    func saveOperations() {
+        PersistenceManager.shared.saveDrops(drops.map { $0.toDTO() })
+        PersistenceManager.shared.saveTrades(trades.map { $0.toDTO() })
     }
-    
+
+    func loadOperations() {
+        let dropDTOs = PersistenceManager.shared.loadDrops()
+        let tradeDTOs = PersistenceManager.shared.loadTrades()
+        self.drops = dropDTOs.compactMap { Drop.fromDTO($0, accounts: accounts) }
+        self.trades = tradeDTOs.compactMap { Trade.fromDTO($0, accounts: accounts) }
+    }
+
+    func deleteOperations() {
+        drops.removeAll()
+        trades.removeAll()
+        PersistenceManager.shared.deleteOperationsFromStorage()
+    }
+
+    // MARK: - App logic
     func addAccount(_ account: Account) {
         accounts.append(account)
+        saveAccounts()
     }
-    
+
     func addDrop(to account: Account, csCase: CSCase) {
         account.cases[csCase, default: 0] += 1
         account.lastDropDate = Date()
@@ -92,7 +101,7 @@ final class AppViewModel: ObservableObject {
         saveAccounts()
         saveOperations()
     }
-    
+
     func validateTrade(sender: Account?, receiver: Account?, cases: [CSCase: Int]) throws -> (Account, Account, [CSCase: Int]) {
         guard let from = sender, let to = receiver, from != to else {
             throw TradeError.sameAccounts
@@ -103,7 +112,7 @@ final class AppViewModel: ObservableObject {
         }
         return (from, to, filtered)
     }
-    
+
     func performTrade(from sender: Account, to receiver: Account, cases: [CSCase: Int]) throws {
         guard sender.id != receiver.id else { throw TradeError.sameAccounts }
         
@@ -119,16 +128,9 @@ final class AppViewModel: ObservableObject {
         saveAccounts()
         saveOperations()
     }
-    
-    func deleteOperations() {
-        drops.removeAll()
-        trades.removeAll()
-        PersistenceManager.shared.deleteOperationsFromStorage()
-    }
-    
+
+    // MARK: - Stats helpers
     var getTotalCasesAmount: Int {
-        accounts.reduce(0) { partialResult, account in
-            partialResult + account.cases.values.reduce(0, +)
-        }
+        accounts.reduce(0) { $0 + $1.cases.values.reduce(0, +) }
     }
 }

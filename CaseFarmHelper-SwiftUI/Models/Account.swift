@@ -29,7 +29,7 @@ final class Account: Identifiable, ObservableObject, Hashable {
         guard let lastDropDate else { return false }
         return lastDropDate >= Date.lastResetDate
     }
-    var lastDropDate: Date?
+    @Published var lastDropDate: Date?
     
     init(id: UUID = UUID(), profileName: String, username: String, cases: [CSCase : Int] = [:], profileImage: UIImage? = nil, lastDropDate: Date? = nil) {
         self.id = id

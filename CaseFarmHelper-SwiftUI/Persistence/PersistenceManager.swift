@@ -7,117 +7,106 @@
 
 import Foundation
 
-class PersistenceManager {
+enum PersistenceFile: String {
+    case accounts = "accounts.json"
+    case drops = "drops.json"
+    case trades = "trades.json"
+    case purchases = "purchases.json"
+}
+
+final class PersistenceManager {
     static let shared = PersistenceManager()
     
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     
-    private let accountsFile = "accounts.json"
-    private static let dropsFile = "drops.json"
-    private static let tradesFile = "trades.json"
-    
-    init() {
+    private init() {
         encoder.outputFormatting = .prettyPrinted
     }
     
-    private static func fileURL(for filename: String) -> URL {
+    private func fileURL(for file: PersistenceFile) -> URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(filename)
+            .appendingPathComponent(file.rawValue)
     }
     
-    private func getDocumentsDirectory() -> URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    }
-    
-    // MARK: - Accounts Persistence
-    func saveAccount(_ accounts: [AccountDTO]) {
+    func save<T: Encodable>(_ value: T, to file: PersistenceFile) {
         do {
-            let data = try encoder.encode(accounts)
-            try data.write(to: FileManager.accountsURL)
-            print("Account saved")
+            let data = try encoder.encode(value)
+            try data.write(to: fileURL(for: file))
+            print("Saved \(file.rawValue)")
         } catch {
-            print("Failed to save accounts", error)
+            print("Failed to save \(file.rawValue):", error)
         }
+    }
+    
+    func load<T: Decodable>(_ type: T.Type, from file: PersistenceFile) -> T? {
+        do {
+            let data = try Data(contentsOf: fileURL(for: file))
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            print("Failed to load \(file.rawValue):", error)
+            return nil
+        }
+    }
+    
+    func delete(_ file: PersistenceFile) {
+        let url = fileURL(for: file)
+        do {
+            if FileManager.default.fileExists(atPath: url.path) {
+                try FileManager.default.removeItem(at: url)
+                print("Deleted \(file.rawValue)")
+            }
+        } catch {
+            print("Couldn’t delete \(file.rawValue):", error)
+        }
+    }
+}
+
+extension PersistenceManager {
+    
+    // Accounts
+    func saveAccounts(_ accounts: [AccountDTO]) {
+        save(accounts, to: .accounts)
     }
     
     func loadAccounts() -> [AccountDTO] {
-        do {
-            let data = try Data(contentsOf: FileManager.accountsURL)
-            return try decoder.decode([AccountDTO].self, from: data)
-        } catch {
-            print("Failed to load accounts", error)
-            return []
-        }
+        load([AccountDTO].self, from: .accounts) ?? []
     }
     
     func deleteAccountsFile() {
-        let url = getDocumentsDirectory().appendingPathComponent(accountsFile)
-        do {
-            try FileManager.default.removeItem(at: url)
-            print("accounts.json deleted")
-        } catch {
-            print("Couldn't delete accounts.json", error)
-        }
+        delete(.accounts)
     }
     
-    // MARK: - Drops
-    static func saveDrop(_ drops: [DropDTO]) {
-        let url = fileURL(for: dropsFile)
-        do {
-            let data = try JSONEncoder().encode(drops)
-            try data.write(to: url)
-        } catch {
-            print("Failed to save drops", error)
-        }
+    // Drops
+    func saveDrops(_ drops: [DropDTO]) {
+        save(drops, to: .drops)
     }
     
-    static func loadDrops() -> [DropDTO] {
-        let url = fileURL(for: dropsFile)
-        do {
-            let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode([DropDTO].self, from: data)
-        } catch {
-            print("Failed to load drops", error)
-            return []
-        }
+    func loadDrops() -> [DropDTO] {
+        load([DropDTO].self, from: .drops) ?? []
     }
     
-    // MARK: - Trades
-    static func saveTrades(_ trades: [TradeDTO]) {
-        let url = fileURL(for: tradesFile)
-        do {
-            let data = try JSONEncoder().encode(trades)
-            try data.write(to: url)
-        } catch {
-            print("Failed to save trades", error)
-        }
+    // Trades
+    func saveTrades(_ trades: [TradeDTO]) {
+        save(trades, to: .trades)
     }
     
-    static func loadTrades() -> [TradeDTO] {
-        let url = fileURL(for: tradesFile)
-        do {
-            let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode([TradeDTO].self, from: data)
-        } catch {
-            print("Failed to load trades", error)
-            return []
-        }
+    func loadTrades() -> [TradeDTO] {
+        load([TradeDTO].self, from: .trades) ?? []
     }
     
+    // Purchases
+    func savePurchases(_ purchases: [PurchaseDTO]) {
+        save(purchases, to: .purchases)
+    }
+    
+    func loadPurchases() -> [PurchaseDTO] {
+        load([PurchaseDTO].self, from: .purchases) ?? []
+    }
+    
+    // Operations (drops + trades)
     func deleteOperationsFromStorage() {
-        let dropsURL = getDocumentsDirectory().appendingPathComponent("drops.json")
-        let tradesURL = getDocumentsDirectory().appendingPathComponent("trades.json")
-        
-        do {
-            if FileManager.default.fileExists(atPath: dropsURL.path) {
-                try FileManager.default.removeItem(at: dropsURL)
-            }
-            if FileManager.default.fileExists(atPath: tradesURL.path) {
-                try FileManager.default.removeItem(at: tradesURL)
-            }
-        } catch {
-            print("Error deleting operations", error)
-        }
+        delete(.drops)
+        delete(.trades)
     }
 }
