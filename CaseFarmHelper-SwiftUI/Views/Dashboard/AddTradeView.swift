@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct AddTradeView: View {
-    
     @EnvironmentObject var viewModel: AppViewModel
-    
+    @Environment(\.dismiss) var dismiss
     @State private var senderID: UUID?
     @State private var receiverID: UUID?
     @State private var cases: [CSCase: Int] = [:]
@@ -22,8 +21,6 @@ struct AddTradeView: View {
     private var receiver: Account? {
         viewModel.accounts.first { $0.id == receiverID }
     }
-    
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {

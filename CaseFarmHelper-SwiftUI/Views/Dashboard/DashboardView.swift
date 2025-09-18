@@ -13,9 +13,9 @@ struct DashboardView: View {
     
     @State private var isPresentedAddDrop: Bool = false
     @State private var isPresentedAddTrade: Bool = false
+    @State private var isPresentedAddPurchase: Bool = false
     @State private var isPresentedDropDetails: Bool = false
     @State private var isPresentedTradeDetails: Bool = false
-    @State private var showProfileName: Bool = false
     
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
@@ -48,6 +48,12 @@ struct DashboardView: View {
                                 } label: {
                                     TradeCellView(trade: trade)
                                 }
+                            case let purchase as Purchase:
+                                Button {
+//                                    selectedPurchase = purchase
+                                } label: {
+                                    PurchaseCellView(purchase: purchase)
+                                }
                             default:
                                 Text("Unexpected Error")
                             }
@@ -58,6 +64,13 @@ struct DashboardView: View {
             .navigationTitle("Dashboard")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        isPresentedAddPurchase.toggle()
+                    } label: {
+                        Image(systemName: "dollarsign")
+                            .fontWeight(.semibold)
+                    }
+                    
                     Button {
                         isPresentedAddTrade.toggle()
                     } label: {
@@ -79,6 +92,9 @@ struct DashboardView: View {
                             .fontWeight(.semibold)
                     }
                 }
+            }
+            .navigationDestination(isPresented: $isPresentedAddPurchase) {
+                AddPurchaseView().environmentObject(viewModel)
             }
             .navigationDestination(isPresented: $isPresentedAddDrop) {
                 AddDropView().environmentObject(viewModel)
@@ -210,6 +226,40 @@ struct TradeCellView: View {
                         .font(.headline)
                         .frame(height: Constants.dashboardCaseSize)
                     Text(trade.monthDayString)
+                        .font(.footnote)
+                        .foregroundStyle(Color(.secondaryLabel))
+                }
+            }
+        }
+    }
+}
+
+//MARK: - Purchase Cell
+struct PurchaseCellView: View {
+    let purchase: Purchase
+    
+    var body: some View {
+        HStack {
+            AccountAvatarView(image: purchase.account.profileImage, size: Constants.menuAvatarSize)
+            VStack(alignment: .leading) {
+                Text(purchase.account.profileName)
+                    .foregroundStyle(Color(.label))
+                    .fontWeight(.bold)
+                Text("purchased ")
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .font(.caption) + Text("x\(purchase.amount) \(purchase.casePurchased.displayName)s ").foregroundStyle(Color(.label)).fontWeight(.semibold).font(.caption)
+            }
+            Spacer()
+            HStack {
+                Image(systemName: "dollarsign")
+                    .font(.headline)
+                    .foregroundStyle(Constants.purchaseColor)
+                VStack {
+                    Image(purchase.casePurchased.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.dashboardCaseSize, height: Constants.dashboardCaseSize)
+                    Text(purchase.monthDayString)
                         .font(.footnote)
                         .foregroundStyle(Color(.secondaryLabel))
                 }

@@ -26,4 +26,5 @@ struct Constants {
     //MARK: Colors
     static let tradeColor: Color = .indigo
     static let dropColor: Color = .green
+    static let purchaseColor: Color = .orange
 }

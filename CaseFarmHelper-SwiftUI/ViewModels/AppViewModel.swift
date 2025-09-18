@@ -24,9 +24,10 @@ final class AppViewModel: ObservableObject {
     @Published var accounts: [Account] = []
     @Published var drops: [Drop] = []
     @Published var trades: [Trade] = []
+    @Published var purchases: [Purchase] = []
 
     var operations: [Operation] {
-        (drops as [Operation] + trades as [Operation]).sorted { $0.date > $1.date }
+        (drops as [Operation] + trades as [Operation] + purchases as [Operation]).sorted { $0.date > $1.date }
     }
 
     init() {
@@ -71,18 +72,22 @@ final class AppViewModel: ObservableObject {
     func saveOperations() {
         PersistenceManager.shared.saveDrops(drops.map { $0.toDTO() })
         PersistenceManager.shared.saveTrades(trades.map { $0.toDTO() })
+        PersistenceManager.shared.savePurchases(purchases.map { $0.toDTO() })
     }
 
     func loadOperations() {
         let dropDTOs = PersistenceManager.shared.loadDrops()
         let tradeDTOs = PersistenceManager.shared.loadTrades()
+        let purchaseDTOs = PersistenceManager.shared.loadPurchases()
         self.drops = dropDTOs.compactMap { Drop.fromDTO($0, accounts: accounts) }
         self.trades = tradeDTOs.compactMap { Trade.fromDTO($0, accounts: accounts) }
+        self.purchases = purchaseDTOs.compactMap { Purchase.fromDTO($0, accounts: accounts) }
     }
 
     func deleteOperations() {
         drops.removeAll()
         trades.removeAll()
+        purchases.removeAll()
         PersistenceManager.shared.deleteOperationsFromStorage()
     }
 
@@ -127,6 +132,16 @@ final class AppViewModel: ObservableObject {
         trades.append(newTrade)
         saveAccounts()
         saveOperations()
+    }
+    
+    func performPurchase(account: Account, csCase: CSCase, amount: Int, totalCost: Double) {
+        account.cases[csCase, default: 0] += amount
+        
+        let newPurchase = Purchase(date: Date(), account: account, caseBought: csCase, amount: amount, totalCost: totalCost)
+        purchases.append(newPurchase)
+        saveAccounts()
+        saveOperations()
+        
     }
 
     // MARK: - Stats helpers

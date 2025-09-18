@@ -14,19 +14,23 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
     case dreamsAndNightmares
     case recoil
     case revolution
-    case fracture
     case kilowatt
     
     // Rare drop cases
-    case bravo
+//    case bravo
     case breakout
     case brokenFang
     case chroma
     case chroma2
     case chroma3
     
-    static let activeDrop: [CSCase] = [.dreamsAndNightmares, .recoil, .revolution, .fracture, .kilowatt]
-    static let rareDrop: [CSCase] = [.bravo, .breakout, .brokenFang, .chroma, .chroma2, .chroma3]
+    // Non-dropping cases
+    case fracture
+    case bravo
+    
+    static let activeDrop: [CSCase] = [.dreamsAndNightmares, .recoil, .revolution, .kilowatt]
+    static let rareDrop: [CSCase] = [.breakout, .brokenFang, .chroma, .chroma2, .chroma3]
+    static let nonDropping: [CSCase] = [.fracture, .bravo]
     
     var displayName: String {
         switch self {

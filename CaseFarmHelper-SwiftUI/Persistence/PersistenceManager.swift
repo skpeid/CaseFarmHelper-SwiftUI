@@ -104,9 +104,10 @@ extension PersistenceManager {
         load([PurchaseDTO].self, from: .purchases) ?? []
     }
     
-    // Operations (drops + trades)
+    // Operations (drops + trades + purchases)
     func deleteOperationsFromStorage() {
         delete(.drops)
         delete(.trades)
+        delete(.purchases)
     }
 }

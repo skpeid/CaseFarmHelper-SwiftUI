@@ -11,7 +11,7 @@ struct PurchaseDTO: Codable, Identifiable {
     let id: UUID
     let date: Date
     let accountID: UUID
-    let caseBought: String
+    let casePurchased: String
     let amount: Int
     let totalCost: Double
     
@@ -19,7 +19,7 @@ struct PurchaseDTO: Codable, Identifiable {
 
 final class Purchase: Operation {
     let account: Account
-    let caseBought: CSCase
+    let casePurchased: CSCase
     let amount: Int
     let totalCost: Double
     
@@ -30,7 +30,7 @@ final class Purchase: Operation {
     
     init(id: UUID = UUID(), date: Date, account: Account, caseBought: CSCase, amount: Int, totalCost: Double) {
         self.account = account
-        self.caseBought = caseBought
+        self.casePurchased = caseBought
         self.amount = amount
         self.totalCost = totalCost
         super.init(id: id, date: date)
@@ -42,14 +42,14 @@ extension Purchase {
         PurchaseDTO(id: id,
                     date: date,
                     accountID: account.id,
-                    caseBought: caseBought.rawValue,
+                    casePurchased: casePurchased.rawValue,
                     amount: amount,
                     totalCost: totalCost)
     }
     
-    func fromDTO(_ dto: PurchaseDTO, accounts: [Account]) -> Purchase? {
+    static func fromDTO(_ dto: PurchaseDTO, accounts: [Account]) -> Purchase? {
         guard let account = accounts.first(where: { $0.id == dto.accountID }),
-              let csCase = CSCase(rawValue: dto.caseBought) else { return nil }
+              let csCase = CSCase(rawValue: dto.casePurchased) else { return nil }
         return Purchase(date: dto.date,
                         account: account,
                         caseBought: csCase,

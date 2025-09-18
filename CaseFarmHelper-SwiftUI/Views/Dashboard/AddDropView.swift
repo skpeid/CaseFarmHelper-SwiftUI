@@ -16,12 +16,10 @@ enum DropType: String, CaseIterable, Identifiable {
 
 struct AddDropView: View {
     @EnvironmentObject var viewModel: AppViewModel
-    
+    @Environment(\.dismiss) var dismiss
     @State private var selectedAccount: Account?
     @State private var selectedCase: CSCase?
     @State private var dropType: DropType = .activeDrop
-    
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {
