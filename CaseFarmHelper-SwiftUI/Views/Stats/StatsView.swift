@@ -62,7 +62,7 @@ struct StatsView: View {
             }
         }
         .sheet(isPresented: $isPresentedInventoryView) {
-            InventoryView(viewModel: appVM)
+            InventoryView()
         }
         .sheet(isPresented: $isPresentedDropsHistoryView) {
             DropsInfoView(drops: appVM.drops)

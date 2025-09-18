@@ -8,18 +8,24 @@
 import SwiftUI
 
 struct InventoryView: View {
-    @ObservedObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     
     var body: some View {
         VStack {
             ModalSheetHeaderView(title: "Inventory")
                 .padding()
             List {
-                ForEach(CSCase.allCases, id: \.self) { csCase in
-                    let totalAmount = viewModel.accounts
-                        .map { $0.cases[csCase] ?? 0 }
-                        .reduce(0, +)
-                    
+                let sortedCases = CSCase.allCases.map { csCase in
+                    (csCase, viewModel.accounts.map { $0.cases[csCase] ?? 0 }
+                            .reduce(0, +))
+                }
+                    .sorted {
+                        if $0.1 == $1.1 {
+                            return $0.0.rawValue < $1.0.rawValue
+                        }
+                        return $0.1 > $1.1
+                    }
+                ForEach(sortedCases, id: \.0) { csCase, totalAmount in
                     HStack {
                         Image(csCase.imageName)
                             .resizable()
