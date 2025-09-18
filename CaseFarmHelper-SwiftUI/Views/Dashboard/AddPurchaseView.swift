@@ -49,18 +49,18 @@ struct AddPurchaseView: View {
             
             HStack {
                 VStack {
-                    Text("Amount")
+                    Text("Quantity")
                         .font(.headline)
                     TextField("Amount", text: $amount)
                         .keyboardType(.numberPad)
                 }
                 .padding(.horizontal)
-                
+                Divider()
                 VStack {
                     Text("Total Cost")
                         .font(.headline)
                     HStack {
-                        TextField("Amount", text: $cost)
+                        TextField("0", text: $cost)
                             .keyboardType(.numberPad)
                         Text("KZT")
                     }

@@ -19,6 +19,7 @@ struct DashboardView: View {
     
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
+    @State private var selectedPurchase: Purchase? = nil
     
     var body: some View {
         NavigationStack {
@@ -50,7 +51,7 @@ struct DashboardView: View {
                                 }
                             case let purchase as Purchase:
                                 Button {
-//                                    selectedPurchase = purchase
+                                    selectedPurchase = purchase
                                 } label: {
                                     PurchaseCellView(purchase: purchase)
                                 }
@@ -109,6 +110,10 @@ struct DashboardView: View {
             .sheet(item: $selectedTrade) { trade in
                 TradeDetailsView(trade: trade)
                     .presentationDetents([.large])
+            }
+            .sheet(item: $selectedPurchase) { purchase in
+                PurchaseDetailsView(purchase: purchase)
+                    .presentationDetents([.medium])
             }
         }
     }
