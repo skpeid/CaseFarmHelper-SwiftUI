@@ -127,7 +127,6 @@ struct DropsInfoView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    .padding(.bottom)
                 }
             }
         }
