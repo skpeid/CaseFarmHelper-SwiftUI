@@ -27,9 +27,9 @@ struct PurchaseDetailsView: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text("purchased ") + Text("\(purchase.amount) \(purchase.casePurchased.displayName)s").fontWeight(.bold)
-                    Text("for ") + Text("\(Int(purchase.totalCost)) KZT").fontWeight(.bold)
+                    Text("for ") + Text("\(Int(purchase.totalCost))₸").fontWeight(.bold)
                     Divider()
-                    Text("Single case price: ") + Text("\(Int(purchase.pricePerCase)) KZT").fontWeight(.bold)
+                    Text("Price: ") + Text("\(Int(purchase.pricePerCase))₸").fontWeight(.bold)
                 }
                 Spacer()
                 Image(purchase.casePurchased.imageName)

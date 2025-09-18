@@ -21,7 +21,7 @@ struct Constants {
     static let dashboardCaseSize: CGFloat = 50
     static let bigCaseSize: CGFloat = 100
     
-    static let infoCircleSize: CGFloat = 150
+    static let infoCircleSize: CGFloat = 100
     
     //MARK: Colors
     static let tradeColor: Color = .indigo

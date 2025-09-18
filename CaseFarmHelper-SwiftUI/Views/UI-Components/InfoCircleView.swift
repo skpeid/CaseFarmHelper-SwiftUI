@@ -20,14 +20,16 @@ struct InfoCircleView: View {
                     .overlay(
                         Circle().stroke(.green, lineWidth: 3)
                     )
-                VStack(spacing: 12) {
+                VStack(spacing: 6) {
                     Text(title)
-                        .font(.caption)
+                        .font(.caption2)
                     Text(value)
-                        .font(.largeTitle)
+                        .font(.title)
                         .fontWeight(.bold)
                     Image(systemName: "chevron.right")
+                        .font(.caption)
                 }
+                .padding(.vertical)
             }
             
         }

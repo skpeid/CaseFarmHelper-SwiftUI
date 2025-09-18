@@ -10,9 +10,9 @@ import SwiftUI
 struct StatsView: View {
     @EnvironmentObject private var appVM: AppViewModel
     @StateObject private var statsVM = StatsViewModel()
-    @State private var isPresentedInventoryValue: Bool = false
-    @State private var isPresentedDropsHistoryView: Bool = false
+    @State private var isPresentedDropsInfoView: Bool = false
     @State private var isPresentedInventoryView: Bool = false
+    @State private var isPresentedPurchasesInfoView: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -43,8 +43,13 @@ struct StatsView: View {
                                 isPresentedInventoryView.toggle()
                             }
                         InfoCircleView(title: "Drops", value: "\(appVM.drops.count)")
+                            .padding(.trailing, 30)
                             .onTapGesture {
-                                isPresentedDropsHistoryView.toggle()
+                                isPresentedDropsInfoView.toggle()
+                            }
+                        InfoCircleView(title: "Purchases", value: "\(appVM.purchases.count)")
+                            .onTapGesture {
+                                isPresentedPurchasesInfoView.toggle()
                             }
                     }
                     .frame(maxWidth: .infinity)
@@ -64,8 +69,11 @@ struct StatsView: View {
         .sheet(isPresented: $isPresentedInventoryView) {
             InventoryView()
         }
-        .sheet(isPresented: $isPresentedDropsHistoryView) {
+        .sheet(isPresented: $isPresentedDropsInfoView) {
             DropsInfoView(drops: appVM.drops)
+        }
+        .sheet(isPresented: $isPresentedPurchasesInfoView) {
+            PurchasesInfoView(purchases: appVM.purchases)
         }
     }
 }

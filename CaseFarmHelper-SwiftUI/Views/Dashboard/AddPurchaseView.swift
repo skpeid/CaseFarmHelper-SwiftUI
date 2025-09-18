@@ -62,7 +62,7 @@ struct AddPurchaseView: View {
                     HStack {
                         TextField("0", text: $cost)
                             .keyboardType(.numberPad)
-                        Text("KZT")
+                        Text("₸")
                     }
                 }
             }
