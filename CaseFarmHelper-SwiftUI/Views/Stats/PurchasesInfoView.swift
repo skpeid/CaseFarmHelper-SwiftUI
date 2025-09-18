@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct PurchasesInfoView: View {
-    let purchases: [Purchase]
+    @EnvironmentObject var appVM: AppViewModel
+    @ObservedObject var statsVM: StatsViewModel = StatsViewModel()
     @State private var selectedTab = 0
     
     var body: some View {
@@ -23,7 +24,7 @@ struct PurchasesInfoView: View {
             .padding()
             if selectedTab == 1 {
                 List {
-                    ForEach(purchases) { purchase in
+                    ForEach(appVM.purchases) { purchase in
                         Section(header: Text(purchase.monthDayString)) {
                             HStack {
                                 VStack {
@@ -52,6 +53,11 @@ struct PurchasesInfoView: View {
                     }
                 }
             } else {
+                let spent = appVM.purchases.reduce(0) { $0 + $1.totalCost }
+                let currentValue = statsVM.currentValue(for: appVM.purchases)
+                let profit = currentValue - spent
+                let percentage = spent > 0 ? (profit / spent) * 100 : 0
+                
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading) {
                         Text("Purchased cases")
@@ -59,7 +65,7 @@ struct PurchasesInfoView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 20) {
                                 ForEach(CSCase.nonDropping, id: \.self) { csCase in
-                                    let totalPurchased = purchases.filter { $0.casePurchased == csCase }
+                                    let totalPurchased = appVM.purchases.filter { $0.casePurchased == csCase }
                                         .map(\.amount)
                                         .reduce(0, +)
                                     if totalPurchased > 0 {
@@ -94,12 +100,12 @@ struct PurchasesInfoView: View {
                                 .padding(.top)
                         }
                         HStack {
-                            Text("-40 000T")
+                            Text("-\(Int(spent))₸")
                                 .font(.largeTitle)
                                 .bold()
                                 .foregroundStyle(Constants.purchaseColor)
                             Divider()
-                            Text("38 500T")
+                            Text("\(Int(currentValue))₸")
                                 .font(.largeTitle)
                                 .bold()
                         }
@@ -113,15 +119,15 @@ struct PurchasesInfoView: View {
                             .fontWeight(.semibold)
                             .padding(.top)
                         HStack {
-                            Text("+3 205T")
+                            Text("\(Int(profit))₸")
                                 .font(.largeTitle)
                                 .bold()
-                                .foregroundStyle(.green)
+                                .foregroundStyle(profit > 0 ? .green : .red)
                             Divider()
-                            Text("+18.05%")
+                            Text("\(Int(percentage))%")
                                 .font(.largeTitle)
                                 .bold()
-                                .foregroundStyle(.green)
+                                .foregroundStyle(profit > 0 ? .green : .red)
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)

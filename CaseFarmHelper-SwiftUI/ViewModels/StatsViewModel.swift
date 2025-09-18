@@ -54,4 +54,12 @@ final class StatsViewModel: ObservableObject {
             }
         }
     }
+    
+    func currentValue(for purchases: [Purchase]) -> Double {
+        purchases.reduce(0) { sum, purchase in
+            guard let currentPrice = casePrices[purchase.casePurchased]?.lowestPrice?.priceToDouble()
+            else { return sum }
+            return sum + Double(purchase.amount) * currentPrice
+        }
+    }
 }

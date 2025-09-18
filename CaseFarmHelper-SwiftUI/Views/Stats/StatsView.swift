@@ -73,7 +73,7 @@ struct StatsView: View {
             DropsInfoView(drops: appVM.drops)
         }
         .sheet(isPresented: $isPresentedPurchasesInfoView) {
-            PurchasesInfoView(purchases: appVM.purchases)
+            PurchasesInfoView()
         }
     }
 }
