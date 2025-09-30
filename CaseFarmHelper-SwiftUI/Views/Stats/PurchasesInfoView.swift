@@ -9,8 +9,11 @@ import SwiftUI
 
 struct PurchasesInfoView: View {
     @EnvironmentObject var appVM: AppViewModel
-    @ObservedObject var statsVM: StatsViewModel = StatsViewModel()
+    @EnvironmentObject var statsVM: StatsViewModel
     @State private var selectedTab = 0
+    var currentValue: Double {
+        statsVM.currentValue(for: appVM.purchases)
+    }
     
     var body: some View {
         VStack {
@@ -54,7 +57,6 @@ struct PurchasesInfoView: View {
                 }
             } else {
                 let spent = appVM.purchases.reduce(0) { $0 + $1.totalCost }
-                let currentValue = statsVM.currentValue(for: appVM.purchases)
                 let profit = currentValue - spent
                 let percentage = spent > 0 ? (profit / spent) * 100 : 0
                 

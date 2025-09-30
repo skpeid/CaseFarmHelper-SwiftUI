@@ -24,10 +24,12 @@ final class StatsViewModel: ObservableObject {
             do {
                 let price = try await service.fetchPrice(for: csCase)
                 casePrices[csCase] = price
+                print("Fetched \(csCase.displayName): \(String(describing: price.lowestPrice))")
             } catch {
                 errorMessage = error.localizedDescription
             }
         }
+        print("Final casePrices count: \(casePrices.count)")
     }
     
     func fetch(_ csCase: CSCase) async {
@@ -56,10 +58,24 @@ final class StatsViewModel: ObservableObject {
     }
     
     func currentValue(for purchases: [Purchase]) -> Double {
-        purchases.reduce(0) { sum, purchase in
-            guard let currentPrice = casePrices[purchase.casePurchased]?.lowestPrice?.priceToDouble()
-            else { return sum }
-            return sum + Double(purchase.amount) * currentPrice
+        var total: Double = 0
+        
+        for purchase in purchases {
+            if let casePrice = casePrices[purchase.casePurchased],
+               let priceStr = casePrice.lowestPrice {
+                
+                let cleaned = priceStr
+                    .replacingOccurrences(of: "₸", with: "")
+                    .replacingOccurrences(of: " ", with: "")
+                    .replacingOccurrences(of: ",", with: ".")
+                
+                if let price = Double(cleaned) {
+                    total += price * Double(purchase.amount)
+                }
+            } else {
+                print("Missing price for: \(purchase.casePurchased.displayName)")
+            }
         }
+        return total
     }
 }

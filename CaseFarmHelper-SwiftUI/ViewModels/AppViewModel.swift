@@ -141,7 +141,6 @@ final class AppViewModel: ObservableObject {
         purchases.append(newPurchase)
         saveAccounts()
         saveOperations()
-        
     }
 
     // MARK: - Stats helpers

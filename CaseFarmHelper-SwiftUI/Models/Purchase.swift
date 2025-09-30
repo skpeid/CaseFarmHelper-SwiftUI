@@ -14,7 +14,6 @@ struct PurchaseDTO: Codable, Identifiable {
     let casePurchased: String
     let amount: Int
     let totalCost: Double
-    
 }
 
 final class Purchase: Operation {

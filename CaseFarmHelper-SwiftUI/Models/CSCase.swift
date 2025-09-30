@@ -17,7 +17,7 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
     case kilowatt
     
     // Rare drop cases
-//    case bravo
+    case bravo
     case breakout
     case brokenFang
     case chroma
@@ -26,11 +26,12 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
     
     // Non-dropping cases
     case fracture
-    case bravo
+    case gallery
+    case fever
     
     static let activeDrop: [CSCase] = [.dreamsAndNightmares, .recoil, .revolution, .kilowatt]
-    static let rareDrop: [CSCase] = [.breakout, .brokenFang, .chroma, .chroma2, .chroma3]
-    static let nonDropping: [CSCase] = [.fracture, .bravo]
+    static let rareDrop: [CSCase] = [.bravo, .breakout, .brokenFang, .chroma, .chroma2, .chroma3]
+    static let nonDropping: [CSCase] = [.fracture, .gallery, .fever]
     
     var displayName: String {
         switch self {
@@ -56,6 +57,10 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
             return "Chroma 2 Case"
         case .chroma3:
             return "Chroma 3 Case"
+        case .gallery:
+            return "Gallery Case"
+        case .fever:
+            return "Fever Case"
         }
     }
     
@@ -83,6 +88,10 @@ enum CSCase: String, CaseIterable, Identifiable, Hashable {
             return "CHR-2"
         case .chroma3:
             return "CHR-3"
+        case .gallery:
+            return "GALR"
+        case .fever:
+            return "FVR"
         }
     }
     

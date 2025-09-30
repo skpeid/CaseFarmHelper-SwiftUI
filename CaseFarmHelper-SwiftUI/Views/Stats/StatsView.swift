@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StatsView: View {
     @EnvironmentObject private var appVM: AppViewModel
-    @StateObject private var statsVM = StatsViewModel()
+    @EnvironmentObject var statsVM: StatsViewModel
     @State private var isPresentedDropsInfoView: Bool = false
     @State private var isPresentedInventoryView: Bool = false
     @State private var isPresentedPurchasesInfoView: Bool = false
