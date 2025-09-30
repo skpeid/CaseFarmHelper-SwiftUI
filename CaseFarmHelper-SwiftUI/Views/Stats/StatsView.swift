@@ -63,7 +63,7 @@ struct StatsView: View {
         }
         .onAppear {
             Task {
-                await statsVM.fetchAllCases()
+                await statsVM.fetchCase(for: appVM.tickerCases)
             }
         }
         .sheet(isPresented: $isPresentedInventoryView) {

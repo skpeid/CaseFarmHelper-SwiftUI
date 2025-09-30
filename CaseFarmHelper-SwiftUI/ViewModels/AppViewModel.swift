@@ -148,3 +148,17 @@ final class AppViewModel: ObservableObject {
         accounts.reduce(0) { $0 + $1.cases.values.reduce(0, +) }
     }
 }
+
+extension AppViewModel {
+    var ownedCases: Set<CSCase> {
+        var set = Set<CSCase>()
+        for account in accounts {
+            for (csCase, amount) in account.cases where amount > 0 {
+                set.insert(csCase)
+            }
+        }
+        return set
+    }
+    
+    var tickerCases: Set<CSCase> { Set(CSCase.activeDrop).union(ownedCases) }
+}

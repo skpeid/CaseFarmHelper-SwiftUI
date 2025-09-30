@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CasesTickerView: View {
+    @EnvironmentObject private var appVM: AppViewModel
     let prices: [CSCase: CasePrice]
     @State private var offset: CGFloat = 0
     @State private var totalWidth: CGFloat = 0

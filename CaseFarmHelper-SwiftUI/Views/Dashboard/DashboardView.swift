@@ -86,12 +86,12 @@ struct DashboardView: View {
                             .fontWeight(.semibold)
                     }
                     //TODO: - Deleting operation json files
-                    Button {
-                        viewModel.deleteOperations()
-                    } label: {
-                        Image(systemName: "trash")
-                            .fontWeight(.semibold)
-                    }
+//                    Button {
+//                        viewModel.deleteOperations()
+//                    } label: {
+//                        Image(systemName: "trash")
+//                            .fontWeight(.semibold)
+//                    }
                 }
             }
             .navigationDestination(isPresented: $isPresentedAddPurchase) {

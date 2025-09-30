@@ -32,15 +32,23 @@ final class StatsViewModel: ObservableObject {
         print("Final casePrices count: \(casePrices.count)")
     }
     
-    func fetch(_ csCase: CSCase) async {
+    func fetchCase(for cases: Set<CSCase>) async {
+        guard !cases.isEmpty else { return }
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
-        do {
-            let price = try await service.fetchPrice(for: csCase)
-            casePrices[csCase] = price
-        } catch {
-            errorMessage = error.localizedDescription
+        
+        for csCase in cases {
+            do {
+                let price = try await service.fetchPrice(for: csCase)
+                casePrices[csCase] = price
+                print("Fetched \(csCase.displayName): \(String(describing: price.lowestPrice))")
+            } catch {
+                errorMessage = error.localizedDescription
+                print("Failed fetch \(csCase.displayName): \(error)")
+            }
         }
+        print("Final casePrices count: \(casePrices.count)")
     }
     
     func totalValue(from accounts: [Account]) -> Double {
