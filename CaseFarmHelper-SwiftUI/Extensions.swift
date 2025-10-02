@@ -24,14 +24,10 @@ extension String {
     func priceToDouble() -> Double? {
         var s = self.trimmingCharacters(in: .whitespacesAndNewlines)
         if s.isEmpty { return nil }
-
         s = s.replacingOccurrences(of: "\u{00A0}", with: "")
-
         let allowed = CharacterSet(charactersIn: "0123456789.,-")
         s = String(s.unicodeScalars.filter { allowed.contains($0) })
-
         guard !s.isEmpty else { return nil }
-
         if s.contains(",") && s.contains(".") {
             if let lastDot = s.lastIndex(of: "."), let lastComma = s.lastIndex(of: ",") {
                 if lastDot > lastComma {
@@ -44,7 +40,7 @@ extension String {
         } else if s.contains(",") {
             s = s.replacingOccurrences(of: ",", with: ".")
         }
-
+        
         return Double(s)
     }
 }

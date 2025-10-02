@@ -55,6 +55,8 @@ struct StatsView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .padding()
+                DropRateGraphView()
+                
                 Spacer()
                 Text("Full statistics is being developed")
                     .font(.footnote)
