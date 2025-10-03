@@ -54,13 +54,9 @@ struct StatsView: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .padding()
-                DropRateGraphView()
-                
-                Spacer()
-                Text("Full statistics is being developed")
-                    .font(.footnote)
-                    .padding()
+                .padding(.horizontal)
+                .padding(.bottom, 50)
+                DropRateGraphView(drops: appVM.drops)
             }
         }
         .onAppear {

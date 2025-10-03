@@ -10,10 +10,10 @@ import SwiftUI
 extension Color {
     static func chartColor(for caseName: CSCase) -> Color {
         switch caseName {
-        case .dreamsAndNightmares: return .pink
-        case .fracture: return .purple
-        case .recoil: return .yellow
-        case .revolution: return .brown
+        case .dreamsAndNightmares: return .purple
+        case .sealedGenesisTerminal: return .blue
+        case .recoil: return .red
+        case .revolution: return .green
         case .kilowatt: return .orange
         default: return .gray
         }
