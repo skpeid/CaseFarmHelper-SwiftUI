@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct DashboardView: View {
-    
     @EnvironmentObject var viewModel: AppViewModel
-    
     @State private var isPresentedAddDrop: Bool = false
     @State private var isPresentedAddTrade: Bool = false
     @State private var isPresentedAddPurchase: Bool = false
     @State private var isPresentedDropDetails: Bool = false
     @State private var isPresentedTradeDetails: Bool = false
-    
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
     @State private var selectedPurchase: Purchase? = nil
+    @State private var operationToDelete: Operation?
+    @State private var showDeleteAlert = false
     
     var body: some View {
         NavigationStack {
@@ -42,7 +41,6 @@ struct DashboardView: View {
                                 } label: {
                                     DropCellView(drop: drop)
                                 }
-                                
                             case let trade as Trade:
                                 Button {
                                     selectedTrade = trade

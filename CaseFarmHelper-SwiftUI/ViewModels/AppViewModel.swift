@@ -169,4 +169,9 @@ extension AppViewModel {
         accounts = []
         accounts = updatedAccounts
     }
+    
+    func deleteAccount(at offsets: IndexSet) {
+        accounts.remove(atOffsets: offsets)
+        saveAccounts()
+    }
 }

@@ -10,7 +10,8 @@ import SwiftUI
 struct AccountsView: View {
     @State private var isPresentedAddAccount: Bool = false
     @State private var isPresentedAccountDetails: Bool = false
-    
+    @State private var accountToDelete: Account?
+    @State private var showDeleteAlert = false
     @EnvironmentObject var viewModel: AppViewModel
     
     var body: some View {
@@ -21,10 +22,29 @@ struct AccountsView: View {
                     Spacer()
                     Text("Total cases: \(viewModel.getTotalCasesAmount)")
                 }) {
-                    List(viewModel.accounts) { account in
-                        NavigationLink(value: account) {
-                            AccountCellView(account: account)
+                    List {
+                        ForEach(viewModel.accounts) { account in
+                            NavigationLink(value: account) {
+                                AccountCellView(account: account)
+                            }
                         }
+                        .onDelete(perform: { indexSet in
+                            if let index = indexSet.first {
+                                accountToDelete = viewModel.accounts[index]
+                                showDeleteAlert = true
+                            }
+                        })
+                    }
+                    .alert("Delete Account", isPresented: $showDeleteAlert, presenting: accountToDelete) { account in
+                        Button("Cancel", role: .cancel) { }
+                        Button("Delete", role: .destructive) {
+                            if let index = viewModel.accounts.firstIndex(where: { $0.id == account.id }) {
+                                viewModel.accounts.remove(at: index)
+                                viewModel.saveAccounts()
+                            }
+                        }
+                    } message: { account in
+                        Text("Are you sure you want to delete \(account.profileName)?")
                     }
                 }
             }
@@ -44,17 +64,17 @@ struct AccountsView: View {
                 }
             }
             //TODO: - Deleting accounts.json
-//            .toolbar {
-//                ToolbarItem(placement: .topBarLeading) {
-//                    Button {
-//                        PersistenceManager.shared.deleteAccountsFile()
-//                        viewModel.accounts.removeAll()
-//                    } label: {
-//                        Text("Delete all accounts")
-//                    }
-//
-//                }
-//            }
+            //            .toolbar {
+            //                ToolbarItem(placement: .topBarLeading) {
+            //                    Button {
+            //                        PersistenceManager.shared.deleteAccountsFile()
+            //                        viewModel.accounts.removeAll()
+            //                    } label: {
+            //                        Text("Delete all accounts")
+            //                    }
+            //
+            //                }
+            //            }
         }
     }
 }
@@ -62,7 +82,7 @@ struct AccountsView: View {
 struct AccountCellView: View {
     @ObservedObject var account: Account
     
-    var body: some View {   
+    var body: some View {
         HStack {
             AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
             VStack(alignment: .leading) {
