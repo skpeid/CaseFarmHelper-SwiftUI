@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AccountsView: View {
-    
     @State private var isPresentedAddAccount: Bool = false
     @State private var isPresentedAccountDetails: Bool = false
     
@@ -63,7 +62,7 @@ struct AccountsView: View {
 struct AccountCellView: View {
     @ObservedObject var account: Account
     
-    var body: some View {
+    var body: some View {   
         HStack {
             AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
             VStack(alignment: .leading) {

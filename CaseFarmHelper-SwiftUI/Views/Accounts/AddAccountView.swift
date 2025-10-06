@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddAccountView: View {
-    
     @State private var profileName: String = ""
     @State private var username: String = ""
     @State private var selectedImage: UIImage?
@@ -38,6 +37,9 @@ struct AddAccountView: View {
                                     .foregroundStyle(.white)
                             }
                         }
+                        .onTapGesture {
+                            showImagePicker.toggle()
+                        }
                         
                         VStack {
                             Text("Profile Name")
@@ -49,9 +51,6 @@ struct AddAccountView: View {
                                 .textFieldStyle(.roundedBorder)
                         }
                         .padding(.leading)
-                    }
-                    .onTapGesture {
-                        showImagePicker.toggle()
                     }
                 }
                 

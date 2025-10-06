@@ -162,3 +162,11 @@ extension AppViewModel {
     
     var tickerCases: Set<CSCase> { Set(CSCase.activeDrop).union(ownedCases) }
 }
+
+extension AppViewModel {
+    func reloadAccounts() {
+        let updatedAccounts = accounts
+        accounts = []
+        accounts = updatedAccounts
+    }
+}
