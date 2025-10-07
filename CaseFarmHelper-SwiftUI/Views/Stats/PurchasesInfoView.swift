@@ -27,7 +27,7 @@ struct PurchasesInfoView: View {
             .padding()
             if selectedTab == 1 {
                 List {
-                    ForEach(appVM.purchases) { purchase in
+                    ForEach(appVM.purchases.reversed()) { purchase in
                         Section(header: Text(purchase.monthDayString)) {
                             HStack {
                                 VStack {

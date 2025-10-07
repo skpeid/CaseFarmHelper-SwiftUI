@@ -75,14 +75,19 @@ struct DropsInfoView: View {
                             let reversed = group.drops.reversed()
                             ForEach(reversed) { drop in
                                 HStack {
-                                    Image(drop.caseDropped.imageName)
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
+                                    AccountAvatarView(image: drop.account.profileImage, size: 40)
                                     VStack(alignment: .leading) {
                                         Text(drop.account.profileName)
-                                        Text(drop.caseDropped.displayName)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
+                                        HStack {
+                                            Text(drop.caseDropped.displayName)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+                                            Image(drop.caseDropped.imageName)
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
+                                        }
+                                        .padding(.trailing, 20)
                                     }
                                     Spacer()
                                     Text(drop.fullDateString)
@@ -116,7 +121,7 @@ struct DropsInfoView: View {
                     HStack {
                         Circle()
                             .fill(Color.chartColor(for: entry.caseType))
-                            .frame(width: 16, height: 16)
+                            .frame(width: 10, height: 10)
                         Image(entry.caseType.imageName)
                             .resizable()
                             .scaledToFit()
