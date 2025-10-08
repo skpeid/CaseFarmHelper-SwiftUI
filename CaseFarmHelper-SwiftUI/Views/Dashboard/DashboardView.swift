@@ -23,8 +23,18 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: HStack {
-                    Text("Status")
+                Section(header: HStack(alignment: .bottom) {
+                    InfoSectionView(title: "STATUS") {
+                        VStack(alignment: .leading) {
+                            Text("This week's progress:")
+                            Text("GREEN").foregroundStyle(.green).bold() + Text(" - collected drop.")
+                            Text("RED").foregroundStyle(.red).bold() + Text(" - didn't received yet.")
+                            
+                        }
+                        .textCase(.none)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    }
                     Spacer()
                     weekInfoText
                 }) {
