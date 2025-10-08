@@ -103,7 +103,7 @@ struct DashboardView: View {
             }
             .sheet(item: $selectedDrop) { drop in
                 DropDetailsView(drop: drop)
-                    .presentationDetents([.height(355)])
+                    .presentationDetents([.medium])
             }
             .sheet(item: $selectedTrade) { trade in
                 TradeDetailsView(trade: trade)

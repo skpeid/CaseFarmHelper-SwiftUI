@@ -174,4 +174,8 @@ extension AppViewModel {
         accounts.remove(atOffsets: offsets)
         saveAccounts()
     }
+    
+    func duplicateDrop(_ drop: Drop) {
+        addDrop(to: drop.account, csCase: drop.caseDropped)
+    }
 }

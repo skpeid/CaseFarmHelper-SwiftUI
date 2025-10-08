@@ -9,6 +9,8 @@ import SwiftUI
 
 struct DropDetailsView: View {
     let drop: Drop
+    @EnvironmentObject var appVM: AppViewModel
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -34,6 +36,16 @@ struct DropDetailsView: View {
                     .padding(.trailing)
             }
             Spacer()
+            HStack {
+                Spacer()
+                Button("Duplicate Drop") {
+                    appVM.duplicateDrop(drop)
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+                .padding(.vertical)
+                Spacer()
+            }
             Divider()
             VStack(alignment: .center) {
                 Text("Date and time: ") + Text(drop.fullDateString).fontWeight(.bold)
