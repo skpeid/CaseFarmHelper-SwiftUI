@@ -79,13 +79,13 @@ struct DropsInfoView: View {
                                     VStack(alignment: .leading) {
                                         Text(drop.account.profileName)
                                         HStack {
+                                            Image(drop.caseDropped.imageName)
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
                                             Text(drop.caseDropped.displayName)
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                                 .lineLimit(1)
-                                            Image(drop.caseDropped.imageName)
-                                                .resizable()
-                                                .frame(width: 24, height: 24)
                                         }
                                         .padding(.trailing, 20)
                                     }

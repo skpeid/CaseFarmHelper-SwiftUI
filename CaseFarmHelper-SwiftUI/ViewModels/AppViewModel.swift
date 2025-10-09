@@ -25,16 +25,16 @@ final class AppViewModel: ObservableObject {
     @Published var drops: [Drop] = []
     @Published var trades: [Trade] = []
     @Published var purchases: [Purchase] = []
-
+    
     var operations: [Operation] {
         (drops as [Operation] + trades as [Operation] + purchases as [Operation]).sorted { $0.date > $1.date }
     }
-
+    
     init() {
         loadAccounts()
         loadOperations()
     }
-
+    
     // MARK: - Accounts persistence
     func saveAccounts() {
         let dtos = accounts.map { acc in
@@ -49,7 +49,7 @@ final class AppViewModel: ObservableObject {
         }
         PersistenceManager.shared.saveAccounts(dtos)
     }
-
+    
     func loadAccounts() {
         let dtos = PersistenceManager.shared.loadAccounts()
         accounts = dtos.map { dto in
@@ -67,14 +67,14 @@ final class AppViewModel: ObservableObject {
             )
         }
     }
-
+    
     // MARK: - Operations persistence
     func saveOperations() {
         PersistenceManager.shared.saveDrops(drops.map { $0.toDTO() })
         PersistenceManager.shared.saveTrades(trades.map { $0.toDTO() })
         PersistenceManager.shared.savePurchases(purchases.map { $0.toDTO() })
     }
-
+    
     func loadOperations() {
         let dropDTOs = PersistenceManager.shared.loadDrops()
         let tradeDTOs = PersistenceManager.shared.loadTrades()
@@ -83,20 +83,20 @@ final class AppViewModel: ObservableObject {
         self.trades = tradeDTOs.compactMap { Trade.fromDTO($0, accounts: accounts) }
         self.purchases = purchaseDTOs.compactMap { Purchase.fromDTO($0, accounts: accounts) }
     }
-
+    
     func deleteOperations() {
         drops.removeAll()
         trades.removeAll()
         purchases.removeAll()
         PersistenceManager.shared.deleteOperationsFromStorage()
     }
-
+    
     // MARK: - App logic
     func addAccount(_ account: Account) {
         accounts.append(account)
         saveAccounts()
     }
-
+    
     func addDrop(to account: Account, csCase: CSCase) {
         account.cases[csCase, default: 0] += 1
         account.lastDropDate = Date()
@@ -106,7 +106,7 @@ final class AppViewModel: ObservableObject {
         saveAccounts()
         saveOperations()
     }
-
+    
     func validateTrade(sender: Account?, receiver: Account?, cases: [CSCase: Int]) throws -> (Account, Account, [CSCase: Int]) {
         guard let from = sender, let to = receiver, from != to else {
             throw TradeError.sameAccounts
@@ -117,7 +117,7 @@ final class AppViewModel: ObservableObject {
         }
         return (from, to, filtered)
     }
-
+    
     func performTrade(from sender: Account, to receiver: Account, cases: [CSCase: Int]) throws {
         guard sender.id != receiver.id else { throw TradeError.sameAccounts }
         
@@ -142,7 +142,7 @@ final class AppViewModel: ObservableObject {
         saveAccounts()
         saveOperations()
     }
-
+    
     // MARK: - Stats helpers
     var getTotalCasesAmount: Int {
         accounts.reduce(0) { $0 + $1.cases.values.reduce(0, +) }

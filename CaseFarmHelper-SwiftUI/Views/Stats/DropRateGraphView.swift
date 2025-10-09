@@ -10,13 +10,14 @@ import Charts
 
 struct CaseRateDataPoint: Identifiable {
     let id = UUID()
-    let date: Date        // Store actual date
+    let date: Date
     let caseType: CSCase
     let count: Int
     
-    // Computed property for display
-    var day: String {
-        date.formatted(date: .abbreviated, time: .omitted)
+    var weekLabel: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM"
+        return formatter.string(from: date)
     }
 }
 
@@ -25,22 +26,24 @@ struct DropRateGraphView: View {
     
     private var chartData: [CaseRateDataPoint] {
         var data: [CaseRateDataPoint] = []
+        let wednesdays = generateWeeklyWednesdays(weekCount: 5)
         
         for csCase in CSCase.activeDrop {
             let caseDrops = drops.filter { $0.caseDropped == csCase }
             let grouped = Dictionary(grouping: caseDrops) { drop in
-                Calendar.current.startOfDay(for: drop.date)
+                getWeekIndex(for: drop.date, wednesdays: wednesdays)
             }
-            let caseData = grouped.map { date, dropsInDay in
-                CaseRateDataPoint(
-                    date: date,
+            
+            for weekIndex in 0..<5 {
+                let dropsThisWeek = grouped[weekIndex] ?? []
+                data.append(CaseRateDataPoint(
+                    date: wednesdays[weekIndex],
                     caseType: csCase,
-                    count: dropsInDay.count
-                )
+                    count: dropsThisWeek.count
+                ))
             }
-            data.append(contentsOf: caseData)
         }
-        
+
         return data.sorted { $0.date < $1.date }
     }
     
@@ -49,20 +52,38 @@ struct DropRateGraphView: View {
             Text("Drop Rate")
             Chart(chartData) { point in
                 LineMark(
-                    x: .value("Day", point.day),
+                    x: .value("Week", point.weekLabel),
                     y: .value("Count", point.count)
                 )
                 .foregroundStyle(by: .value("Case", point.caseType.tickerName))
                 .lineStyle(StrokeStyle(lineWidth: 3))
-                
-                PointMark(
-                    x: .value("Day", point.day),
-                    y: .value("Count", point.count)
-                )
-                .foregroundStyle(by: .value("Case", point.caseType.tickerName))
-                .symbol(Circle())
             }
         }
         .padding()
+    }
+    
+    private func generateWeeklyWednesdays(weekCount: Int = 5) -> [Date] {
+        let calendar = Calendar.current
+        let lastReset = Date.lastResetDate
+        
+        var wednesdays: [Date] = []
+        for i in 0..<weekCount {
+            if let wednesday = calendar.date(byAdding: .weekOfYear, value: -i, to: lastReset) {
+                wednesdays.append(wednesday)
+            }
+        }
+        
+        return wednesdays.reversed()
+    }
+    
+    private func getWeekIndex(for date: Date, wednesdays: [Date]) -> Int? {
+        let targetWeek = date.weekOfYear
+        
+        for (index, wednesday) in wednesdays.enumerated() {
+            if wednesday.weekOfYear == targetWeek {
+                return index
+            }
+        }
+        return nil
     }
 }
