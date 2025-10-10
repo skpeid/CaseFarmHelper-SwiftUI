@@ -85,4 +85,10 @@ extension Date {
     var weekOfYear: Int {
         Calendar.current.component(.weekOfYear, from: self)
     }
+    
+    func fullDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d, HH:mm"
+        return formatter.string(from: self)
+    }
 }

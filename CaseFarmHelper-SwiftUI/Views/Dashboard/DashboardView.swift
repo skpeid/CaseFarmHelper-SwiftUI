@@ -14,6 +14,7 @@ struct DashboardView: View {
     @State private var isPresentedAddPurchase: Bool = false
     @State private var isPresentedDropDetails: Bool = false
     @State private var isPresentedTradeDetails: Bool = false
+    @State private var isPresentedDropStatus: Bool = false
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
     @State private var selectedPurchase: Purchase? = nil
@@ -39,6 +40,9 @@ struct DashboardView: View {
                     weekInfoText
                 }) {
                     accountsDropStatusGrid
+                        .onTapGesture {
+                            isPresentedDropStatus.toggle()
+                        }
                 }
                 
                 Section(header: Text("Operations")) {
@@ -122,6 +126,40 @@ struct DashboardView: View {
             .sheet(item: $selectedPurchase) { purchase in
                 PurchaseDetailsView(purchase: purchase)
                     .presentationDetents([.medium])
+            }
+            .sheet(isPresented: $isPresentedDropStatus) {
+                dropStatusView
+                    .presentationDetents([.large])
+            }
+        }
+    }
+    
+    private var dropStatusView: some View {
+        return VStack {
+            ModalSheetHeaderView(title: "Drop Status")
+                .padding()
+            List {
+                ForEach(viewModel.accounts) { account in
+                    HStack {
+                        AccountAvatarView(image: account.profileImage, size: Constants.menuAvatarSize)
+                        Text(account.profileName)
+                            .foregroundStyle(Color(.label))
+                            .fontWeight(.bold)
+                            .strikethrough(account.gotDropThisWeek)
+                        if account.gotDropThisWeek {
+                            Image(systemName: "checkmark")
+                                .bold()
+                                .foregroundStyle(.green)
+                        }
+                        Spacer()
+                        if account.gotDropThisWeek {
+                            if let date = account.lastDropDate {
+                                Text(date.fullDateString())
+                                    .font(.caption2)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
