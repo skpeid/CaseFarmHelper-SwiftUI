@@ -10,6 +10,7 @@ import SwiftUI
 struct AccountsView: View {
     @State private var isPresentedAddAccount: Bool = false
     @State private var isPresentedAccountDetails: Bool = false
+    @State private var isPresentedImportAccounts: Bool = false
     @State private var accountToDelete: Account?
     @State private var showDeleteAlert = false
     @EnvironmentObject var viewModel: AppViewModel
@@ -52,15 +53,27 @@ struct AccountsView: View {
             .navigationDestination(isPresented: $isPresentedAddAccount, destination: {
                 AddAccountView()
             })
+            .navigationDestination(isPresented: $isPresentedImportAccounts, destination: {
+                ImportAccountsView()
+            })
             .navigationDestination(for: Account.self) { account in
                 AccountDetailsView(account: account)
             }
             .toolbar {
-                Button {
-                    isPresentedAddAccount.toggle()
-                } label: {
-                    Image(systemName: "plus")
-                        .fontWeight(.semibold)
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        isPresentedImportAccounts.toggle()
+                    } label: {
+                        Text("Import")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isPresentedAddAccount.toggle()
+                    } label: {
+                        Image(systemName: "plus")
+                            .fontWeight(.semibold)
+                    }
                 }
             }
             //TODO: - Deleting accounts.json
