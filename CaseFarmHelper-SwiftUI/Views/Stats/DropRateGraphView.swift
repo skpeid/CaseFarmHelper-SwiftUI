@@ -26,7 +26,7 @@ struct DropRateGraphView: View {
     
     private var chartData: [CaseRateDataPoint] {
         var data: [CaseRateDataPoint] = []
-        let wednesdays = generateWeeklyWednesdays(weekCount: 5)
+        let wednesdays = generateWeeklyWednesdays(weekCount: 4)
         
         for csCase in CSCase.activeDrop {
             let caseDrops = drops.filter { $0.caseDropped == csCase }
@@ -34,7 +34,7 @@ struct DropRateGraphView: View {
                 getWeekIndex(for: drop.date, wednesdays: wednesdays)
             }
             
-            for weekIndex in 0..<5 {
+            for weekIndex in 0..<4 {
                 let dropsThisWeek = grouped[weekIndex] ?? []
                 data.append(CaseRateDataPoint(
                     date: wednesdays[weekIndex],
@@ -62,7 +62,7 @@ struct DropRateGraphView: View {
         .padding()
     }
     
-    private func generateWeeklyWednesdays(weekCount: Int = 5) -> [Date] {
+    private func generateWeeklyWednesdays(weekCount: Int) -> [Date] {
         let calendar = Calendar.current
         let lastReset = Date.lastResetDate
         

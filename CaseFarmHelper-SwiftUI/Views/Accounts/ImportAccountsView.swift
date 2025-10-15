@@ -7,11 +7,19 @@
 
 import SwiftUI
 
+enum ImportState {
+    case idle
+    case processing(lines: [String])
+    case inProgress(current: Int, total: Int, accounts: [Account])
+    case completed(successCount: Int, failedCount: Int)
+    case error(String)
+}
+
 struct ImportAccountsView: View {
     @EnvironmentObject var appVM: AppViewModel
     @Environment(\.dismiss) var dismiss
     @State private var showDocumentPicker = false
-    @State private var importStatus = ""
+    @State private var importState = ImportState.idle
     
     var body: some View {
         NavigationView {
@@ -39,6 +47,44 @@ struct ImportAccountsView: View {
                 }
                 .padding()
                 
+                Group {
+                    switch importState {
+                    case .idle:
+                        EmptyView()
+                        
+                    case .processing(let lines):
+                        VStack {
+                            ProgressView()
+                            Text("Preparing to import \(lines.count) accounts...")
+                        }
+                        
+                    case .inProgress(let current, let total, _):
+                        VStack {
+                            ProgressView(value: Double(current), total: Double(total))
+                                .progressViewStyle(LinearProgressViewStyle())
+                            Text("Fetching \(current)/\(total)")
+                                .font(.caption)
+                        }
+                        .padding()
+                        
+                    case .completed(let success, let failed):
+                        VStack(spacing: 10) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.system(size: 40))
+                            Text("Imported \(success) accounts")
+                            if failed > 0 {
+                                Text("\(failed) failed to import")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        
+                    case .error(let message):
+                        Text("Error: \(message)")
+                            .foregroundColor(.red)
+                    }
+                }
+                
                 Spacer()
                 RoundedButton(title: "Select file") {
                     showDocumentPicker.toggle()
@@ -46,44 +92,92 @@ struct ImportAccountsView: View {
                 .padding()
             }
         }
+        .navigationTitle("Import Accounts")
+        
         .sheet(isPresented: $showDocumentPicker) {
             DocumentPicker { urls in
                 if let fileURL = urls.first {
-                    processFile(fileURL)
+                    Task {
+                        await processFile(fileURL)
+                    }
                 }
             }
         }
     }
     
-    private func processFile(_ url: URL) {
+    private func processFile(_ url: URL) async {
         do {
             let content = try String(contentsOf: url)
             let lines = content.components(separatedBy: .newlines)
                 .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             
-            var importedAccounts: [Account] = []
-            
-            for (index, line) in lines.enumerated() {
-                let account = Account(
-                    id: UUID(),
-                    profileName: "Imported \(index + 1)",
-                    username: line,
-                    cases: [:],
-                    profileImage: nil
-                )
-                importedAccounts.append(account)
+            await MainActor.run {
+                importState = .processing(lines: lines)
             }
             
-            appVM.accounts.append(contentsOf: importedAccounts)
-            importStatus = "Imported \(importedAccounts.count) accounts"
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                dismiss()
-            }
+            await importAccounts(from: lines)
             
         } catch {
-            importStatus = "Error reading file: \(error.localizedDescription)"
+            await MainActor.run {
+                importState = .error("Failed to read file: \(error.localizedDescription)")
+            }
         }
+    }
+    
+    private func importAccounts(from identifiers: [String]) async {
+        var importedAccounts: [Account] = []
+        var successCount = 0
+        var failedCount = 0
+        
+        for (index, identifier) in identifiers.enumerated() {
+            await MainActor.run {
+                importState = .inProgress(current: index, total: identifiers.count, accounts: importedAccounts)
+            }
+            
+            if let profile = await SteamService().fetchSteamProfile(identifier: identifier) {
+                let profileImage = await SteamService().downloadImage(from: profile.avatarfull)
+                
+                let account = Account(
+                    id: UUID(),
+                    profileName: profile.personaname,
+                    username: profile.steamid,
+                    cases: [:],
+                    profileImage: profileImage
+                )
+                importedAccounts.append(account)
+                successCount += 1
+            } else {
+                failedCount += 1
+            }
+            
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+        
+        await MainActor.run {
+            appVM.accounts.append(contentsOf: importedAccounts)
+            importState = .completed(successCount: successCount, failedCount: failedCount)
+        }
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        await MainActor.run {
+            dismiss()
+        }
+    }
+    
+    private func fetchSteamAccount(identifier: String) async -> Account? {
+        guard let profile = await SteamService().fetchSteamProfile(identifier: identifier) else {
+            return nil
+        }
+        
+        let profileImage = await SteamService().downloadImage(from: profile.avatarfull)
+        
+        return Account(
+            id: UUID(),
+            profileName: profile.personaname,
+            username: profile.steamid,
+            cases: [:],
+            profileImage: profileImage
+        )
     }
 }
 
@@ -103,5 +197,12 @@ struct InstructionStep: View {
                 .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
+    }
+}
+
+extension ImportState {
+    var isInProgress: Bool {
+        if case .inProgress = self { return true }
+        return false
     }
 }
