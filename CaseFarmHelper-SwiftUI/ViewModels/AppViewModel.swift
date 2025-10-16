@@ -179,3 +179,80 @@ extension AppViewModel {
         addDrop(to: drop.account, csCase: drop.caseDropped)
     }
 }
+
+// MARK: - Deleting operations
+extension AppViewModel {
+    // Drops
+    func deleteDrop(_ drop: Drop) {
+        print("🗑 Deleting drop")
+        rollbackDrop(drop)
+        drops.removeAll { $0.id == drop.id }
+        saveOperations()
+        saveAccounts()
+    }
+
+    private func rollbackDrop(_ drop: Drop) {
+        guard let accountIndex = accounts.firstIndex(where: { $0.id == drop.account.id }) else { return }
+        let account = accounts[accountIndex]
+        
+        if let currentCount = account.cases[drop.caseDropped], currentCount > 0 {
+            account.cases[drop.caseDropped] = currentCount - 1
+            if account.cases[drop.caseDropped] == 0 {
+                account.cases.removeValue(forKey: drop.caseDropped)
+            }
+        }
+    }
+
+    // Trades
+    func deleteTrade(_ trade: Trade) {
+        print("🗑 Deleting trade")
+        rollbackTrade(trade)
+        trades.removeAll { $0.id == trade.id }
+        saveOperations()
+        saveAccounts()
+    }
+
+    private func rollbackTrade(_ trade: Trade) {
+        // Return cases to FROM account
+        if let fromIndex = accounts.firstIndex(where: { $0.id == trade.sender.id }) {
+            let fromAccount = accounts[fromIndex]
+            for (csCase, amount) in trade.casesTraded {
+                fromAccount.cases[csCase, default: 0] += amount
+            }
+        }
+        
+        // Remove cases from TO account
+        if let toIndex = accounts.firstIndex(where: { $0.id == trade.receiver.id }) {
+            let toAccount = accounts[toIndex]
+            for (csCase, amount) in trade.casesTraded {
+                if let currentCount = toAccount.cases[csCase] {
+                    toAccount.cases[csCase] = currentCount - amount
+                    if toAccount.cases[csCase] == 0 {
+                        toAccount.cases.removeValue(forKey: csCase)
+                    }
+                }
+            }
+        }
+    }
+
+    // Purchases
+    func deletePurchase(_ purchase: Purchase) {
+        print("🗑 Deleting purchase")
+        rollbackPurchase(purchase)
+        purchases.removeAll { $0.id == purchase.id }
+        saveOperations()
+        saveAccounts()
+    }
+
+    private func rollbackPurchase(_ purchase: Purchase) {
+        if let accountIndex = accounts.firstIndex(where: { $0.id == purchase.account.id }) {
+            let account = accounts[accountIndex]
+            if let currentCount = account.cases[purchase.casePurchased] {
+                account.cases[purchase.casePurchased] = currentCount - purchase.amount
+                if account.cases[purchase.casePurchased] == 0 {
+                    account.cases.removeValue(forKey: purchase.casePurchased)
+                }
+            }
+        }
+    }
+}

@@ -15,11 +15,26 @@ struct DashboardView: View {
     @State private var isPresentedDropDetails: Bool = false
     @State private var isPresentedTradeDetails: Bool = false
     @State private var isPresentedDropStatus: Bool = false
+    
     @State private var selectedDrop: Drop? = nil
     @State private var selectedTrade: Trade? = nil
     @State private var selectedPurchase: Purchase? = nil
-    @State private var operationToDelete: Operation?
+    
+    @State private var dropToDelete: Drop?
+    @State private var tradeToDelete: Trade?
+    @State private var purchaseToDelete: Purchase?
     @State private var showDeleteAlert = false
+    
+    private var operationToDelete: Operation? {
+        dropToDelete ?? tradeToDelete ?? purchaseToDelete
+    }
+    
+    private var alertTitle: String {
+        if dropToDelete != nil { return "Delete Drop" }
+        if tradeToDelete != nil { return "Undo Trade" }
+        if purchaseToDelete != nil { return "Delete Purchase" }
+        return "Delete Operation"
+    }
     
     var body: some View {
         NavigationStack {
@@ -55,20 +70,73 @@ struct DashboardView: View {
                                 } label: {
                                     DropCellView(drop: drop)
                                 }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button {
+                                        dropToDelete = drop
+                                        showDeleteAlert = true
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                    .tint(.red)
+                                }
+                                
                             case let trade as Trade:
                                 Button {
                                     selectedTrade = trade
                                 } label: {
                                     TradeCellView(trade: trade)
                                 }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button {
+                                        tradeToDelete = trade
+                                        showDeleteAlert = true
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                    .tint(.red)
+                                }
+                                
                             case let purchase as Purchase:
                                 Button {
                                     selectedPurchase = purchase
                                 } label: {
                                     PurchaseCellView(purchase: purchase)
                                 }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button {
+                                        purchaseToDelete = purchase
+                                        showDeleteAlert = true
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                    .tint(.red)
+                                }
+                                
                             default:
                                 Text("Unexpected Error")
+                            }
+                        }
+                    }
+                    .alert(alertTitle, isPresented: $showDeleteAlert) {
+                        Button("Cancel", role: .cancel) {
+                            dropToDelete = nil
+                            tradeToDelete = nil
+                            purchaseToDelete = nil
+                        }
+                        if let trade = tradeToDelete {
+                            Button("Undo", role: .destructive) {
+                                viewModel.deleteTrade(trade)
+                                tradeToDelete = nil
+                            }
+                        } else {
+                            Button("Delete", role: .destructive) {
+                                if let drop = dropToDelete {
+                                    viewModel.deleteDrop(drop)
+                                } else if let purchase = purchaseToDelete {
+                                    viewModel.deletePurchase(purchase)
+                                }
+                                dropToDelete = nil
+                                purchaseToDelete = nil
                             }
                         }
                     }
@@ -97,13 +165,6 @@ struct DashboardView: View {
                         Image(systemName: "plus")
                             .fontWeight(.semibold)
                     }
-                    //TODO: - Deleting operation json files
-//                    Button {
-//                        viewModel.deleteOperations()
-//                    } label: {
-//                        Image(systemName: "trash")
-//                            .fontWeight(.semibold)
-//                    }
                 }
             }
             .navigationDestination(isPresented: $isPresentedAddPurchase) {

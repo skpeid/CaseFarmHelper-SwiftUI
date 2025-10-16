@@ -29,7 +29,7 @@ struct ImportAccountsView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.blue)
                         .padding(.bottom, 20)
-                    Text("Import account from Steam")
+                    Text("Batch import accounts from Steam")
                         .font(.title2.bold())
                 }
                 .padding(.top, 40)
@@ -92,8 +92,6 @@ struct ImportAccountsView: View {
                 .padding()
             }
         }
-        .navigationTitle("Import Accounts")
-        
         .sheet(isPresented: $showDocumentPicker) {
             DocumentPicker { urls in
                 if let fileURL = urls.first {

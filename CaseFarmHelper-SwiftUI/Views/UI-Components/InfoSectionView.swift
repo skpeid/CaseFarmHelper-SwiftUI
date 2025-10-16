@@ -33,7 +33,7 @@ struct InfoSectionView<Content: View>: View {
             
             if isExpanded {
                 infoContent
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .transition(.opacity.combined(with: .move(edge: .leading)))
                     .padding()
                     .cornerRadius(8)
                     .overlay(
