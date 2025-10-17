@@ -248,3 +248,28 @@ extension AppViewModel {
         }
     }
 }
+
+// MARK: - Account validation
+extension AppViewModel {
+    func isUsernameUnique(_ username: String, excluding accountId: UUID? = nil) -> Bool {
+        let normalizedUsername = username.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        return !accounts.contains { account in
+            if let accountId = accountId, account.id == accountId {
+                return false
+            }
+            return account.username.lowercased() == normalizedUsername
+        }
+    }
+
+    func isSteamIdUnique(_ steamId: String, excluding accountId: UUID? = nil) -> Bool {
+        let normalizedId = steamId.trimmingCharacters(in: .whitespaces)
+        
+        return !accounts.contains { account in
+            if let accountId = accountId, account.id == accountId {
+                return false
+            }
+            return account.username == normalizedId
+        }
+    }
+}

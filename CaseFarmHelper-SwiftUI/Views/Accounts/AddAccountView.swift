@@ -13,16 +13,23 @@ struct AddAccountView: View {
     @State private var selectedImage: UIImage?
     @State private var showImagePicker: Bool = false
     @State private var cases: [CSCase: Int] = [:]
+    @State private var usernameError: String?
     
     @EnvironmentObject var viewModel: AppViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) var dismiss
     
+    private var isFormValid: Bool {
+        !profileName.isEmpty &&
+        !username.isEmpty &&
+        usernameError == nil
+    }
+    
     var body: some View {
         VStack {
             Form {
                 Section(header: Text("Account Info")) {
-                    HStack(alignment: .center) {
+                    HStack(alignment: .top) {
                         VStack {
                             if let image = selectedImage {
                                 Image(uiImage: image)
@@ -40,6 +47,7 @@ struct AddAccountView: View {
                                     )
                             }
                         }
+                        .padding(.top, 28)
                         .onTapGesture {
                             showImagePicker.toggle()
                         }
@@ -52,6 +60,15 @@ struct AddAccountView: View {
                             Text("Username")
                             TextField("Username", text: $username)
                                 .textFieldStyle(.roundedBorder)
+                                .onChange(of: username) { newValue in
+                                    validateUsername(newValue)
+                                }
+                            
+                            if let error = usernameError {
+                                Text(error)
+                                    .foregroundColor(.red)
+                                    .font(.caption)
+                            }
                         }
                         .padding(.leading)
                     }
@@ -76,36 +93,46 @@ struct AddAccountView: View {
             
             Spacer()
             RoundedButton(title: "Add Account") {
-                if profileName.isEmpty || username.isEmpty { return }
-                let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: selectedImage)
-                viewModel.addAccount(newAccount)
-                viewModel.saveAccounts()
-                dismiss()
+                if isFormValid {
+                    let newAccount = Account(profileName: profileName, username: username, cases: cases, profileImage: selectedImage)
+                    viewModel.addAccount(newAccount)
+                    viewModel.saveAccounts()
+                    dismiss()
+                }
             }
             .padding([.horizontal, .bottom])
+            .disabled(!isFormValid)
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $selectedImage)
             }
         }
     }
     
-    private func binding(for key: CSCase) -> Binding<String> {
-        Binding<String>(
+    private func binding(for csCase: CSCase) -> Binding<String> {
+        return Binding<String>(
             get: {
-                if let value = cases[key], value > 0 {
-                    return String(value)
-                } else {
-                    return ""
-                }
+                String(cases[csCase] ?? 0)
             },
             set: { newValue in
-                if let intValue = Int(newValue) {
-                    cases[key] = intValue
-                } else {
-                    cases[key] = 0
+                if let value = Int(newValue), value >= 0 {
+                    cases[csCase] = value
+                } else if newValue.isEmpty {
+                    cases[csCase] = 0
                 }
             }
         )
+    }
+    
+    private func validateUsername(_ username: String) {
+        let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+        
+        if trimmedUsername.isEmpty {
+            usernameError = nil
+        } else if !viewModel.isUsernameUnique(trimmedUsername) {
+            usernameError = "This username is already used by another account"
+        } else {
+            usernameError = nil
+        }
     }
 }
 

@@ -10,8 +10,8 @@ import SwiftUI
 enum ImportState {
     case idle
     case processing(lines: [String])
-    case inProgress(current: Int, total: Int, accounts: [Account])
-    case completed(successCount: Int, failedCount: Int)
+    case inProgress(current: Int, total: Int, accounts: [Account], duplicates: Int)
+    case completed(successCount: Int, failedCount: Int, duplicateCount: Int)
     case error(String)
 }
 
@@ -58,16 +58,21 @@ struct ImportAccountsView: View {
                             Text("Preparing to import \(lines.count) accounts...")
                         }
                         
-                    case .inProgress(let current, let total, _):
+                    case .inProgress(let current, let total, _, let duplicates):
                         VStack {
                             ProgressView(value: Double(current), total: Double(total))
                                 .progressViewStyle(LinearProgressViewStyle())
                             Text("Fetching \(current)/\(total)")
                                 .font(.caption)
+                            if duplicates > 0 {
+                                Text("\(duplicates) duplicates skipped")
+                                    .font(.caption2)
+                                    .foregroundColor(.orange)
+                            }
                         }
                         .padding()
                         
-                    case .completed(let success, let failed):
+                    case .completed(let success, let failed, let duplicates):
                         VStack(spacing: 10) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
@@ -76,6 +81,10 @@ struct ImportAccountsView: View {
                             if failed > 0 {
                                 Text("\(failed) failed to import")
                                     .foregroundColor(.red)
+                            }
+                            if duplicates > 0 {
+                                Text("\(duplicates) duplicates skipped")
+                                    .foregroundColor(.orange)
                             }
                         }
                         
@@ -126,24 +135,21 @@ struct ImportAccountsView: View {
         var importedAccounts: [Account] = []
         var successCount = 0
         var failedCount = 0
+        var duplicateCount = 0
         
         for (index, identifier) in identifiers.enumerated() {
             await MainActor.run {
-                importState = .inProgress(current: index, total: identifiers.count, accounts: importedAccounts)
+                importState = .inProgress(current: index, total: identifiers.count, accounts: importedAccounts, duplicates: duplicateCount)
             }
             
-            if let profile = await SteamService().fetchSteamProfile(identifier: identifier) {
-                let profileImage = await SteamService().downloadImage(from: profile.avatarfull)
-                
-                let account = Account(
-                    id: UUID(),
-                    profileName: profile.personaname,
-                    username: profile.steamid,
-                    cases: [:],
-                    profileImage: profileImage
-                )
-                importedAccounts.append(account)
-                successCount += 1
+            if let account = await fetchSteamAccount(identifier: identifier) {
+                if appVM.isSteamIdUnique(account.username) {
+                    importedAccounts.append(account)
+                    successCount += 1
+                } else {
+                    duplicateCount += 1
+                    print("Skipping duplicate SteamID: \(account.username)")
+                }
             } else {
                 failedCount += 1
             }
@@ -153,7 +159,8 @@ struct ImportAccountsView: View {
         
         await MainActor.run {
             appVM.accounts.append(contentsOf: importedAccounts)
-            importState = .completed(successCount: successCount, failedCount: failedCount)
+            appVM.saveAccounts()
+            importState = .completed(successCount: successCount, failedCount: failedCount, duplicateCount: duplicateCount)
         }
         
         try? await Task.sleep(nanoseconds: 2_000_000_000)
