@@ -33,8 +33,11 @@ struct AddAccountView: View {
                                 Circle()
                                     .fill(Color(.systemGray4))
                                     .frame(width: 100, height: 100)
-                                    .overlay(Text("Select"))
-                                    .foregroundStyle(.white)
+                                    .overlay(
+                                        Image(systemName: "camera.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundStyle(.white)
+                                    )
                             }
                         }
                         .onTapGesture {
